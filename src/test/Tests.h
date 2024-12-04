@@ -20,6 +20,9 @@ public:
         BDD_ID d;
         BDD_ID a_and_b_id;
         BDD_ID b_and_a_id;
+        BDD_ID a_or_b_id;
+        BDD_ID neg_a_id;
+        BDD_ID neg_b_id;
 
         void SetUp() override {
             m = std::make_unique<Manager>();
@@ -29,6 +32,9 @@ public:
             d = m->createVar("d");  // ID 5
             a_and_b_id = m->and2(a, b);
             b_and_a_id = m->and2(b, a);
+            a_or_b_id = m->or2(a, b);
+            neg_a_id = m->neg(a);
+            neg_b_id = m->neg(b);
         }
 
         void TearDown() override {
@@ -39,6 +45,19 @@ public:
 
 };
     // Tests Lukas Philipp begin
+
+    // TEST_F(ManagerTest, Xnor2Test) /* NOLINT */
+    // {
+    //     EXPECT_EQ(m->xnor2(neg_b_id, neg_a_id), m->xnor2(a, b));
+    // }
+
+    TEST_F(ManagerTest, Test3) /* NOLINT */
+    {
+        EXPECT_EQ(m->ite(a, b, neg_a_id), m->or2(a_and_b_id, neg_a_id));
+        BDD_ID test = m->ite(b, m->True(),a);
+        EXPECT_EQ(test, a_or_b_id);
+    }
+
     TEST_F(ManagerTest, test) /* NOLINT */
     {
         EXPECT_EQ(a_and_b_id, b_and_a_id);
@@ -63,8 +82,10 @@ public:
     {
         BDD_ID neg_a_id = m->neg(a);
         BDD_ID neg_b_id = m->neg(b);
+        BDD_ID xnor2_neg_b_neg_a = m->xnor2(neg_b_id, neg_a_id);
+        BDD_ID xnor2_b_a =  m->xnor2(a, b);
 
-        EXPECT_EQ(m->xnor2(neg_b_id, neg_a_id), m->xnor2(a, b));
+        EXPECT_EQ(xnor2_neg_b_neg_a, xnor2_b_a);
     }
 
     TEST_F(ManagerTest, Test2) /* NOLINT */

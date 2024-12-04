@@ -1,19 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 project(VDSProject CXX C)
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC -std=c++17 ${LLVM_CXX_FLAGS} ")
+include(CTest)
+include(FetchContent)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
-
-option(ENABLE_ADDRESS_SANITIZER "Enable AddressSanitizer for memory leak detection" OFF)
-If(ENABLE_ADDRESS_SANITIZER)
-
-    set(ASAN_FLAGS "-fsanitize=address")
-
-    add_compile_options(${ASAN_FLAGS})
-
-    add_link_options(${ASAN_FLAGS})
-endif()
 
 # Download and unpack googletest at configure time
 configure_file(CMakeLists.txt.in ${CMAKE_SOURCE_DIR}/gtest/googletest-download/CMakeLists.txt)
@@ -29,6 +19,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} --build .
 if(result)
     message(FATAL_ERROR "Build step for googletest failed: ${result}")
 endif()
+
 
 # Add googletest directly to our build. This defines
 # the gtest and gtest_main targets.
@@ -53,25 +44,12 @@ link_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/src/test/)
 link_directories(${CMAKE_SOURCE_DIR}/src/test/)
 
-include_directories(${CMAKE_SOURCE_DIR}/src/Philipp_Tests/)
-link_directories(${CMAKE_SOURCE_DIR}/src/Philipp_Tests/)
-
 include_directories(${CMAKE_SOURCE_DIR}/src/bench/)
 link_directories(${CMAKE_SOURCE_DIR}/src/bench/)
 
 include_directories(${CMAKE_SOURCE_DIR}/src/verify/)
 link_directories(${CMAKE_SOURCE_DIR}/src/verify/)
 
-#target_link_libraries(VDSProject Manager)
-#target_link_libraries(VDSProject gtest gtest_main pthread)
-
 add_subdirectory(src)
-
 add_executable(VDSProject src/main.cpp)
-#target_link_libraries(VDSProject Manager)
-# Verlinke die gtest- und gtest_main-Bibliotheken
-target_link_libraries(VDSProject
-        Manager
-        gtest
-        gtest_main
-)
+target_link_libraries(VDSProject Manager)

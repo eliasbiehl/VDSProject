@@ -43,8 +43,12 @@ namespace ClassProject {
 
     BDD_ID Manager::ite(const BDD_ID i, const BDD_ID t, const BDD_ID e){
         // Check for terminal cases
-        if (isConstant(i)) {
-           return i == True() ? t : e;
+        if (i == True()) {
+            return t;
+        }
+        if (i == False())
+        {
+            return e;
         }
         if (t == TrueId && e == FalseId) {
             return i;
@@ -54,13 +58,15 @@ namespace ClassProject {
             return t;
         }
 
+        // const BDD_ID new_id = get_nextID();
+        // const auto label = "if" + unique_tb.at(i).label + " then " + unique_tb.at(t).label + " else " + unique_tb.at(e).label;
         // Check if node already exists
-        const auto ite_entry = computed_tb.find(uTableRow(i, t, e));
-        if (ite_entry != computed_tb.end())
-        {
-            // Entry found -> return result
-            return ite_entry->second;
-        }
+        // const auto ite_entry = computed_tb.find(uTableRow(i, t, e));
+        // if (ite_entry != computed_tb.end())
+        // {
+        //     // Entry found -> return result
+        //     return ite_entry->second;
+        // }
         // find the smallest top index for x
         BDD_ID x = topVar(i);
         if (topVar(t) < x && isVariable(topVar(t)))
@@ -80,22 +86,30 @@ namespace ClassProject {
 
         if (high == low)
         {
-            computed_tb.emplace(uTableRow(i, t, e), high);
+            //computed_tb.emplace(uTableRow(i, t, e), high);
             return high;
         }
 
         // Check for entry already existing entry in computed table
         const auto computed_tb_entry = computed_tb.find(uTableRow(high, low, x));
+        auto temp_1 = uTableRow(high, low, x);
         if (computed_tb_entry != computed_tb.end())
         {
             // Entry found -> return result
             // computed_tb.emplace(uTableRow(high, low, x), new_id);
             return computed_tb_entry->second;
         }
+        // for (BDD_ID id = False(); id < get_nextID(); id++)
+        // {
+        //     if (topVar(id) == x && coFactorTrue(id) == high && coFactorFalse(id) == low)
+        //     {
+        //         return id;
+        //     }
+        // }
         // Entry not found
         // Add Entry
         const BDD_ID new_id = get_nextID();
-        auto temp_1 = uTableRow(high, low, x);
+        auto temp_2 = uTableRow(high, low, x);
         computed_tb.emplace(uTableRow(high, low, x), new_id);
         // Generate Label for Visualization
         const auto label = "if" + unique_tb.at(x).label + " then " + unique_tb.at(high).label + " else " + unique_tb.at(low).label;
@@ -146,9 +160,9 @@ namespace ClassProject {
         if (high == low) {
             return high;
         }
-
         // compute result with ite-function
         return ite(topVar(f), high, low);
+
     }
 
     BDD_ID Manager::coFactorTrue(const BDD_ID f){
