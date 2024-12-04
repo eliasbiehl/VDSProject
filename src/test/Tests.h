@@ -58,6 +58,26 @@ public:
         EXPECT_EQ(m->getTopVarName(a_and_b_id), "a");
         EXPECT_EQ(m->topVar(a_and_b_id), m->topVar(a));
     }
+
+    TEST_F(ManagerTest, XNOR2Test)
+    {
+        BDD_ID neg_a_id = m->neg(a);
+        BDD_ID neg_b_id = m->neg(b);
+
+        EXPECT_EQ(m->xnor2(neg_b_id, neg_a_id), m->xnor2(a, b));
+    }
+
+    TEST_F(ManagerTest, Test2) /* NOLINT */
+    {
+        BDD_ID neg_a_id = m->neg(a);
+
+        BDD_ID a_and_b_id = m->and2(a, b);
+
+        BDD_ID a_or_b_id = m->or2(a, b);
+
+        EXPECT_EQ(m->ite(a, b, neg_a_id), m->or2(a_and_b_id, neg_a_id));
+        EXPECT_EQ(m->ite(b, TrueId, a), a_or_b_id);
+    }
     //end Tests Lukas Philipp
 
     TEST_F(ManagerTest, createVar) {
