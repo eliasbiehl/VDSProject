@@ -53,6 +53,9 @@ link_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/src/test/)
 link_directories(${CMAKE_SOURCE_DIR}/src/test/)
 
+include_directories(${CMAKE_SOURCE_DIR}/src/Philipp_Tests/)
+link_directories(${CMAKE_SOURCE_DIR}/src/Philipp_Tests/)
+
 include_directories(${CMAKE_SOURCE_DIR}/src/bench/)
 link_directories(${CMAKE_SOURCE_DIR}/src/bench/)
 
@@ -63,6 +66,7 @@ link_directories(${CMAKE_SOURCE_DIR}/src/verify/)
 #target_link_libraries(VDSProject gtest gtest_main pthread)
 
 add_subdirectory(src)
+
 add_executable(VDSProject src/main.cpp)
 #target_link_libraries(VDSProject Manager)
 # Verlinke die gtest- und gtest_main-Bibliotheken
