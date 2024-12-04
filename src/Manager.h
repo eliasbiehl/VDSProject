@@ -60,7 +60,9 @@ namespace ClassProject {
 
         BDD_ID get_nextID()
         {
-            return uniqueTableSize();
+            return unique
+
+            TableSize();
         }
 
     public:

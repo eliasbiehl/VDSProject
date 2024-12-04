@@ -76,7 +76,7 @@ namespace ClassProject {
         const BDD_ID high = ite(coFactorTrue(i, x), coFactorTrue(t, x), coFactorTrue(e, x));
         const BDD_ID low = ite(coFactorFalse(i, x), coFactorFalse(t, x), coFactorFalse(e, x));
 
-        std::cout << x << " " << high << " " << low << std::endl;
+        //std::cout << x << " " << high << " " << low << std::endl;
 
         if (high == low)
         {
@@ -94,7 +94,7 @@ namespace ClassProject {
         }
         // Entry not found
         // Add Entry
-        const BDD_ID new_id = get_nextID();
+        const BDD_ID new_id = get_nextID() - 1;
         computed_tb.emplace(uTableRow(high, low, x), new_id);
         // Generate Label for Visualization
         const auto label = "if" + unique_tb.at(x).label + " then " + unique_tb.at(high).label + " else " + unique_tb.at(low).label;
