@@ -9,10 +9,10 @@ namespace ClassProject {
     }
 
     void Manager::init_unique_tb() {
-        computed_tb[uTableRow {False(), False(), False(), "false"}] = False();
-        unique_tb.emplace(uniqueTableSize(), uTableRow {False(), False(), False(), "false"});
-        computed_tb[uTableRow{True(), True(), True(), "true"}] = True();
-        unique_tb.emplace(uniqueTableSize(), uTableRow{True(), True(), True(), "true"});
+        computed_tb[uTableRow {False(), False(), False(), "False"}] = False();
+        unique_tb.emplace(uniqueTableSize(), uTableRow {False(), False(), False(), "False"});
+        computed_tb[uTableRow{True(), True(), True(), "True"}] = True();
+        unique_tb.emplace(uniqueTableSize(), uTableRow{True(), True(), True(), "True"});
     }
 
     BDD_ID Manager::createVar(const std::string &label){
