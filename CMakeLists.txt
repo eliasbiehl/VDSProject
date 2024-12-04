@@ -45,6 +45,9 @@ link_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/src/test/)
 link_directories(${CMAKE_SOURCE_DIR}/src/test/)
 
+include_directories(${CMAKE_SOURCE_DIR}/src/Philipp_Tests/)
+link_directories(${CMAKE_SOURCE_DIR}/src/Philipp_Tests/)
+
 include_directories(${CMAKE_SOURCE_DIR}/src/bench/)
 link_directories(${CMAKE_SOURCE_DIR}/src/bench/)
 
@@ -52,5 +55,7 @@ include_directories(${CMAKE_SOURCE_DIR}/src/verify/)
 link_directories(${CMAKE_SOURCE_DIR}/src/verify/)
 
 add_subdirectory(src)
-add_executable(VDSProject src/main.cpp)
+add_executable(VDSProject src/main.cpp
+        src/Philipp_Tests/Test.h
+        src/Philipp_Tests/main_test_PL.cpp)
 target_link_libraries(VDSProject Manager)

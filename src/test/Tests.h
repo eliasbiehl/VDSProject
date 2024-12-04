@@ -98,7 +98,7 @@ public:
         EXPECT_EQ(m->ite(m->True(), a, b), a);
         EXPECT_EQ(m->ite(a, m->True(), m->False()), a);
         EXPECT_EQ(m->ite(c, d, d), d);
-        EXPECT_EQ(m->ite(a, m->False(), m->True()), m->neg(a));
+        EXPECT_EQ(m->ite(a, m->False(), m->True()), m->neg(a)); //Verbessert
     }
 
     TEST_F(ManagerTest, coFactorTrue) {

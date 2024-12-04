@@ -76,7 +76,7 @@ namespace ClassProject {
         const BDD_ID high = ite(coFactorTrue(i, x), coFactorTrue(t, x), coFactorTrue(e, x));
         const BDD_ID low = ite(coFactorFalse(i, x), coFactorFalse(t, x), coFactorFalse(e, x));
 
-        std::cout << x << " " << high << " " << low << std::endl;
+        //std::cout << x << " " << high << " " << low << std::endl;
 
         if (high == low)
         {
