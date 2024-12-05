@@ -23,6 +23,24 @@ public:
         BDD_ID a_or_b_id;
         BDD_ID neg_a_id;
         BDD_ID neg_b_id;
+        BDD_ID neg_c_id;
+        BDD_ID neg_d_id;
+
+        BDD_ID a_and_neg_b_id;
+        BDD_ID neg_a_and_b_id;
+        BDD_ID a_xor_b;
+        BDD_ID nor_a_b_id;
+        BDD_ID xnor_a_b_id;
+        BDD_ID a_greater_equal_b;
+        BDD_ID a_less_equal_b;
+        BDD_ID nand_a_b_id;
+        BDD_ID c_and_neg_d_id;
+        BDD_ID complexBDD;
+
+        BDD_ID complexBDD_pos_cofactor;
+        BDD_ID complexBDD_neg_cofactor;
+
+
 
         void SetUp() override {
             m = std::make_unique<Manager>();
@@ -35,6 +53,25 @@ public:
             a_or_b_id = m->or2(a, b);
             neg_a_id = m->neg(a);
             neg_b_id = m->neg(b);
+            neg_c_id = m->neg(c);
+            neg_d_id = m->neg(d);
+
+            a_xor_b = m->xor2(a, b);
+
+            nor_a_b_id = m->nor2(a, b);
+            xnor_a_b_id = m->xnor2(a, b);
+            a_greater_equal_b = m->or2(a, neg_b_id);
+            a_less_equal_b = m->or2(neg_a_id, b);
+            nand_a_b_id = m->nand2(a, b);
+
+            a_and_neg_b_id = m->and2(a, neg_b_id);
+            neg_a_and_b_id = m->and2(neg_a_id, b);
+
+            c_and_neg_d_id = m->and2(c, neg_b_id);
+            complexBDD = m->or2(a_and_b_id, c_and_neg_d_id);
+            complexBDD_pos_cofactor = m->or2(b, m->and2(c, neg_d_id));
+            complexBDD_neg_cofactor = m->and2(c, neg_d_id);
+
         }
 
         void TearDown() override {
@@ -146,16 +183,76 @@ public:
         EXPECT_EQ(m->ite(a, m->True(), m->False()), a);
         EXPECT_EQ(m->ite(c, d, d), d);
         EXPECT_EQ(m->ite(a, m->False(), m->True()), m->neg(a)); //Verbessert
+
+        EXPECT_EQ(m->ite(m->False(), m->False(), m->False()), m->False());
+        EXPECT_EQ(m->ite(a, b, m->False()), a_and_b_id);
+
+        EXPECT_EQ(m->ite(a, neg_b_id, m->False()), a_and_neg_b_id);
+
+        //EXPECT_EQ(m->ite(a, m->True(), m->True()), a);
+
+        EXPECT_EQ(m->ite(a, m->False(), b), neg_a_and_b_id);
+
+        EXPECT_EQ(m->ite(a, neg_b_id, b), a_xor_b);
+        EXPECT_EQ(m->ite(a, m->True(), b), a_or_b_id);
+        EXPECT_EQ(m->ite(a, m->False(), neg_b_id), nor_a_b_id);
+        EXPECT_EQ(m->ite(a, b, neg_b_id), xnor_a_b_id);
+        EXPECT_EQ(m->ite(b, m->False(), m->True()), neg_b_id);
+        EXPECT_EQ(m->ite(a, m->True(), neg_b_id), a_greater_equal_b);
+        EXPECT_EQ(m->ite(a, b, m->True()), a_less_equal_b);
+        EXPECT_EQ(m->ite(a, neg_b_id, m->True()), nand_a_b_id);
+
+
+
+
+
+
     }
 
     TEST_F(ManagerTest, coFactorTrue) {
+//        EXPECT_EQ(m->coFactorTrue(m->True()), TrueId);
+  //      EXPECT_EQ(m->coFactorTrue(a), TrueId);
+// usage of function?!
+
+                // Basic cases
         EXPECT_EQ(m->coFactorTrue(m->True()), TrueId);
-        EXPECT_EQ(m->coFactorTrue(a), TrueId);
+        EXPECT_EQ(m->coFactorTrue(m->False()), FalseId);
+        EXPECT_EQ(m->coFactorTrue(a), TrueId); // Assuming 'a' evaluates to True
+
+        // Cofactor with a variable that is not in the BDD
+        EXPECT_EQ(m->coFactorTrue(b), m->True()); // Assuming 'b' is a BDD variable
+
+        // Cofactor with a variable that is in the BDD
+        EXPECT_EQ(m->coFactorTrue(c), m->True()); // Assuming 'c' evaluates to True
+
+        // Cofactor with a complex BDD
+        EXPECT_EQ(m->coFactorTrue(complexBDD, a), complexBDD_pos_cofactor);
+
+        // Cofactor with a negated variable
+        //EXPECT_EQ(m->coFactorTrue(notA), expectedResultForNotATrue);
     }
 
     TEST_F(ManagerTest, coFactorFalse) {
-        EXPECT_EQ(m->coFactorFalse(m->False()), FalseId);
-        EXPECT_EQ(m->coFactorFalse(a), FalseId);
+       // EXPECT_EQ(m->coFactorFalse(m->False()), FalseId);
+       // EXPECT_EQ(m->coFactorFalse(a), FalseId);
+
+            // Basic cases
+    EXPECT_EQ(m->coFactorFalse(m->False()), FalseId);
+    EXPECT_EQ(m->coFactorFalse(m->True()), TrueId);
+    EXPECT_EQ(m->coFactorFalse(a), FalseId); // Assuming 'a' evaluates to False
+
+    // Cofactor with a variable that is not in the BDD
+    EXPECT_EQ(m->coFactorFalse(b), m->False()); // Assuming 'b' is a BDD variable
+
+    // Cofactor with a variable that is in the BDD
+    EXPECT_EQ(m->coFactorFalse(c), m->False()); // Assuming 'c' evaluates to False
+
+    // Cofactor with a complex BDD
+    EXPECT_EQ(m->coFactorFalse(complexBDD, a), complexBDD_neg_cofactor);
+
+    // Cofactor with a negated variable
+    //EXPECT_EQ(m->coFactorFalse(notA), expectedResultForNotAFalse);
+
     }
 
     TEST_F(ManagerTest, and2_function) {
