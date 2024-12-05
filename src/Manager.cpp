@@ -61,12 +61,12 @@ namespace ClassProject {
         // const BDD_ID new_id = get_nextID();
         // const auto label = "if" + unique_tb.at(i).label + " then " + unique_tb.at(t).label + " else " + unique_tb.at(e).label;
         // Check if node already exists
-        // const auto ite_entry = computed_tb.find(uTableRow(i, t, e));
-        // if (ite_entry != computed_tb.end())
-        // {
-        //     // Entry found -> return result
-        //     return ite_entry->second;
-        // }
+        const auto ite_entry = computed_tb.find(uTableRow(i, t, e));
+        if (ite_entry != computed_tb.end())
+        {
+            // Entry found -> return result
+            return ite_entry->second;
+        }
         // find the smallest top index for x
         BDD_ID x = topVar(i);
         if (topVar(t) < x && isVariable(topVar(t)))
@@ -91,26 +91,26 @@ namespace ClassProject {
         }
 
         // Check for entry already existing entry in computed table
-        const auto computed_tb_entry = computed_tb.find(uTableRow(high, low, x));
-        auto temp_1 = uTableRow(high, low, x);
-        if (computed_tb_entry != computed_tb.end())
-        {
-            // Entry found -> return result
-            // computed_tb.emplace(uTableRow(high, low, x), new_id);
-            return computed_tb_entry->second;
-        }
-        // for (BDD_ID id = False(); id < get_nextID(); id++)
+        // const auto computed_tb_entry = computed_tb.find(uTableRow(high, low, x));
+        // auto temp_1 = uTableRow(high, low, x);
+        // if (computed_tb_entry != computed_tb.end())
         // {
-        //     if (topVar(id) == x && coFactorTrue(id) == high && coFactorFalse(id) == low)
-        //     {
-        //         return id;
-        //     }
+        //     // Entry found -> return result
+        //     // computed_tb.emplace(uTableRow(high, low, x), new_id);
+        //     return computed_tb_entry->second;
         // }
+        for (BDD_ID id = False(); id < get_nextID(); id++)
+        {
+            if (topVar(id) == x && coFactorTrue(id) == high && coFactorFalse(id) == low)
+            {
+                return id;
+            }
+        }
         // Entry not found
         // Add Entry
         const BDD_ID new_id = get_nextID();
         auto temp_2 = uTableRow(high, low, x);
-        computed_tb.emplace(uTableRow(high, low, x), new_id);
+        computed_tb.emplace(uTableRow(i, t, e), new_id);
         // Generate Label for Visualization
         const auto label = "if" + unique_tb.at(x).label + " then " + unique_tb.at(high).label + " else " + unique_tb.at(low).label;
         unique_tb.emplace(new_id, uTableRow(high, low, x, label));
