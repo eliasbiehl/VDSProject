@@ -4,6 +4,7 @@
 
 
 namespace ClassProject {
+
     Manager::Manager() {
         init_unique_tb();
     }
@@ -58,8 +59,6 @@ namespace ClassProject {
             return t;
         }
 
-        // const BDD_ID new_id = get_nextID();
-        // const auto label = "if" + unique_tb.at(i).label + " then " + unique_tb.at(t).label + " else " + unique_tb.at(e).label;
         // Check if node already exists
         const auto ite_entry = computed_tb.find(uTableRow(i, t, e));
         if (ite_entry != computed_tb.end())
@@ -67,6 +66,7 @@ namespace ClassProject {
             // Entry found -> return result
             return ite_entry->second;
         }
+
         // find the smallest top index for x
         BDD_ID x = topVar(i);
         if (topVar(t) < x && isVariable(topVar(t)))
@@ -82,23 +82,12 @@ namespace ClassProject {
         const BDD_ID high = ite(coFactorTrue(i, x), coFactorTrue(t, x), coFactorTrue(e, x));
         const BDD_ID low = ite(coFactorFalse(i, x), coFactorFalse(t, x), coFactorFalse(e, x));
 
-        //std::cout << x << " " << high << " " << low << std::endl;
-
         if (high == low)
         {
-            //computed_tb.emplace(uTableRow(i, t, e), high);
             return high;
         }
 
         // Check for entry already existing entry in computed table
-        // const auto computed_tb_entry = computed_tb.find(uTableRow(high, low, x));
-        // auto temp_1 = uTableRow(high, low, x);
-        // if (computed_tb_entry != computed_tb.end())
-        // {
-        //     // Entry found -> return result
-        //     // computed_tb.emplace(uTableRow(high, low, x), new_id);
-        //     return computed_tb_entry->second;
-        // }
         for (BDD_ID id = False(); id < get_nextID(); id++)
         {
             if (topVar(id) == x && coFactorTrue(id) == high && coFactorFalse(id) == low)
@@ -106,13 +95,14 @@ namespace ClassProject {
                 return id;
             }
         }
+
         // Entry not found
         // Add Entry
         const BDD_ID new_id = get_nextID();
         auto temp_2 = uTableRow(high, low, x);
         computed_tb.emplace(uTableRow(i, t, e), new_id);
         // Generate Label for Visualization
-        const auto label = "if" + unique_tb.at(x).label + " then " + unique_tb.at(high).label + " else " + unique_tb.at(low).label;
+        const auto label = "if " + unique_tb.at(x).label + " then " + unique_tb.at(high).label + " else " + unique_tb.at(low).label;
         unique_tb.emplace(new_id, uTableRow(high, low, x, label));
 
         return new_id;
@@ -218,48 +208,28 @@ namespace ClassProject {
         bool insert_successful = nodes_of_root.insert(root).second;
 
         // Check if node is already processed
-        if (!insert_successful)
+        if (insert_successful)
         {
-            return;
+            // recursive call for following nodes (high and low)
+            findNodes(unique_tb.at(root).high, nodes_of_root);
+            findNodes(unique_tb.at(root).low, nodes_of_root);
         }
-
-        // Check for terminal node (also terminate case for recursion
-        if (isConstant(root))
-        {
-            return;
-        }
-
-        // recursive call for following nodes (high and low)
-        findNodes(unique_tb.at(root).high, nodes_of_root);
-        findNodes(unique_tb.at(root).low, nodes_of_root);
     }
 
     void Manager::findVars(const BDD_ID &root, std::set<BDD_ID> &vars_of_root){
-        // // Check for Variable
-        // if (isVariable(root))
-        // {
-        //     // Attempt to add current node to the set
-        //     bool insert_successful = vars_of_root.insert(root).second;
-        //     // Check if node is already processed
-        //     if (!insert_successful)
-        //     {
-        //         return;
-        //     }
-        // }
+
         std::set<BDD_ID> nodes;
         findNodes(root, nodes);
         for(const BDD_ID &node : nodes)
         {
             BDD_ID top = topVar(node);
+
             // Check for terminal node
             if (isVariable(top))
             {
                 vars_of_root.insert(top);
             }
         }
-        // // recursive call for following nodes (high and low)
-        // findVars(unique_tb.at(root).high, vars_of_root);
-        // findVars(unique_tb.at(root).low, vars_of_root);
     }
 
     size_t Manager::uniqueTableSize(){
@@ -267,6 +237,7 @@ namespace ClassProject {
     }
 
     void Manager::visualizeBDD(std::string filepath, BDD_ID &root){
+        
         // Open file to write DOT-file
         std::ofstream file(filepath);
 
