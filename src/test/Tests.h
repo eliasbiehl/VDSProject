@@ -67,11 +67,10 @@ public:
             a_and_neg_b_id = m->and2(a, neg_b_id);
             neg_a_and_b_id = m->and2(neg_a_id, b);
 
-            c_and_neg_d_id = m->and2(c, neg_b_id);
+            c_and_neg_d_id = m->and2(c, neg_d_id);
             complexBDD = m->or2(a_and_b_id, c_and_neg_d_id);
             complexBDD_pos_cofactor = m->or2(b, m->and2(c, neg_d_id));
             complexBDD_neg_cofactor = m->and2(c, neg_d_id);
-
         }
 
         void TearDown() override {
@@ -189,7 +188,7 @@ public:
 
         EXPECT_EQ(m->ite(a, neg_b_id, m->False()), a_and_neg_b_id);
 
-        //EXPECT_EQ(m->ite(a, m->True(), m->True()), a);
+
 
         EXPECT_EQ(m->ite(a, m->False(), b), neg_a_and_b_id);
 
@@ -203,16 +202,9 @@ public:
         EXPECT_EQ(m->ite(a, neg_b_id, m->True()), nand_a_b_id);
 
 
-
-
-
-
     }
 
     TEST_F(ManagerTest, coFactorTrue) {
-//        EXPECT_EQ(m->coFactorTrue(m->True()), TrueId);
-  //      EXPECT_EQ(m->coFactorTrue(a), TrueId);
-// usage of function?!
 
                 // Basic cases
         EXPECT_EQ(m->coFactorTrue(m->True()), TrueId);
@@ -229,12 +221,10 @@ public:
         EXPECT_EQ(m->coFactorTrue(complexBDD, a), complexBDD_pos_cofactor);
 
         // Cofactor with a negated variable
-        //EXPECT_EQ(m->coFactorTrue(notA), expectedResultForNotATrue);
+        EXPECT_EQ(m->coFactorTrue(neg_a_id), m->False());
     }
 
     TEST_F(ManagerTest, coFactorFalse) {
-       // EXPECT_EQ(m->coFactorFalse(m->False()), FalseId);
-       // EXPECT_EQ(m->coFactorFalse(a), FalseId);
 
             // Basic cases
     EXPECT_EQ(m->coFactorFalse(m->False()), FalseId);
@@ -251,7 +241,7 @@ public:
     EXPECT_EQ(m->coFactorFalse(complexBDD, a), complexBDD_neg_cofactor);
 
     // Cofactor with a negated variable
-    //EXPECT_EQ(m->coFactorFalse(notA), expectedResultForNotAFalse);
+    EXPECT_EQ(m->coFactorFalse(neg_a_id), m->True());
 
     }
 
