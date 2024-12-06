@@ -257,8 +257,6 @@ namespace ClassProject {
                 vars_of_root.insert(top);
             }
         }
-
-
         // // recursive call for following nodes (high and low)
         // findVars(unique_tb.at(root).high, vars_of_root);
         // findVars(unique_tb.at(root).low, vars_of_root);

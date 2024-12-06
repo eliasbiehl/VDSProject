@@ -75,38 +75,31 @@ public:
 
         void TearDown() override {
             m.reset();
-            // m->~Manager();
         }
 
 
 };
     // Tests Lukas Philipp begin
-
-    // TEST_F(ManagerTest, Xnor2Test) /* NOLINT */
-    // {
-    //     EXPECT_EQ(m->xnor2(neg_b_id, neg_a_id), m->xnor2(a, b));
-    // }
-
-    TEST_F(ManagerTest, Test3) /* NOLINT */
+    TEST_F(ManagerTest, Test3)
     {
         EXPECT_EQ(m->ite(a, b, neg_a_id), m->or2(a_and_b_id, neg_a_id));
         BDD_ID test = m->ite(b, m->True(),a);
         EXPECT_EQ(test, a_or_b_id);
     }
 
-    TEST_F(ManagerTest, test) /* NOLINT */
+    TEST_F(ManagerTest, test)
     {
         EXPECT_EQ(a_and_b_id, b_and_a_id);
         m->visualizeBDD("a_and_b.dot", a_and_b_id);
         m->visualizeBDD("b_and_a.dot", b_and_a_id);
     }
 
-    TEST_F(ManagerTest, IsVariableTest) /* NOLINT */
+    TEST_F(ManagerTest, IsVariableTest)
     {
         EXPECT_FALSE(m->isVariable(a_and_b_id));
     }
 
-    TEST_F(ManagerTest, GetTopVarNameTest) /* NOLINT */
+    TEST_F(ManagerTest, GetTopVarNameTest)
     {
         EXPECT_EQ(m->getTopVarName(m->False()), "False");
         EXPECT_EQ(m->getTopVarName(m->True()), "True");
@@ -124,7 +117,7 @@ public:
         EXPECT_EQ(xnor2_neg_b_neg_a, xnor2_b_a);
     }
 
-    TEST_F(ManagerTest, Test2) /* NOLINT */
+    TEST_F(ManagerTest, Test2)
     {
         BDD_ID neg_a_id = m->neg(a);
 
@@ -155,6 +148,7 @@ public:
 
 
     TEST_F(ManagerTest, isConstant) {
+
         EXPECT_EQ(m->isConstant(m->False()), TrueId);
         EXPECT_EQ(m->isConstant(m->True()), TrueId);
         EXPECT_EQ(m->isConstant(a), FalseId);
@@ -164,6 +158,7 @@ public:
     }
 
     TEST_F(ManagerTest, variable_recognition) {
+
         EXPECT_EQ(m->isVariable(a), TrueId);
         EXPECT_EQ(m->isVariable(b), TrueId);
         EXPECT_EQ(m->isVariable(c), TrueId);
@@ -174,6 +169,7 @@ public:
     }
 
     TEST_F(ManagerTest, ite) {
+
         EXPECT_EQ(m->ite(m->True(), m->False(), m->True()), FalseId);
         EXPECT_EQ(m->ite(m->False(), m->False(), m->True()), TrueId);
 
@@ -200,13 +196,11 @@ public:
         EXPECT_EQ(m->ite(a, m->True(), neg_b_id), a_greater_equal_b);
         EXPECT_EQ(m->ite(a, b, m->True()), a_less_equal_b);
         EXPECT_EQ(m->ite(a, neg_b_id, m->True()), nand_a_b_id);
-
-
     }
 
     TEST_F(ManagerTest, coFactorTrue) {
 
-                // Basic cases
+        // Basic cases
         EXPECT_EQ(m->coFactorTrue(m->True()), TrueId);
         EXPECT_EQ(m->coFactorTrue(m->False()), FalseId);
         EXPECT_EQ(m->coFactorTrue(a), TrueId); // Assuming 'a' evaluates to True
@@ -226,26 +220,26 @@ public:
 
     TEST_F(ManagerTest, coFactorFalse) {
 
-            // Basic cases
-    EXPECT_EQ(m->coFactorFalse(m->False()), FalseId);
-    EXPECT_EQ(m->coFactorFalse(m->True()), TrueId);
-    EXPECT_EQ(m->coFactorFalse(a), FalseId); // Assuming 'a' evaluates to False
+        // Basic cases
+        EXPECT_EQ(m->coFactorFalse(m->False()), FalseId);
+        EXPECT_EQ(m->coFactorFalse(m->True()), TrueId);
+        EXPECT_EQ(m->coFactorFalse(a), FalseId); // Assuming 'a' evaluates to False
 
-    // Cofactor with a variable that is not in the BDD
-    EXPECT_EQ(m->coFactorFalse(b), m->False()); // Assuming 'b' is a BDD variable
+        // Cofactor with a variable that is not in the BDD
+        EXPECT_EQ(m->coFactorFalse(b), m->False()); // Assuming 'b' is a BDD variable
 
-    // Cofactor with a variable that is in the BDD
-    EXPECT_EQ(m->coFactorFalse(c), m->False()); // Assuming 'c' evaluates to False
+        // Cofactor with a variable that is in the BDD
+        EXPECT_EQ(m->coFactorFalse(c), m->False()); // Assuming 'c' evaluates to False
 
-    // Cofactor with a complex BDD
-    EXPECT_EQ(m->coFactorFalse(complexBDD, a), complexBDD_neg_cofactor);
+        // Cofactor with a complex BDD
+        EXPECT_EQ(m->coFactorFalse(complexBDD, a), complexBDD_neg_cofactor);
 
-    // Cofactor with a negated variable
-    EXPECT_EQ(m->coFactorFalse(neg_a_id), m->True());
-
+        // Cofactor with a negated variable
+        EXPECT_EQ(m->coFactorFalse(neg_a_id), m->True());
     }
 
     TEST_F(ManagerTest, and2_function) {
+
         // truth table
         EXPECT_EQ(m->and2(m->False(), m->False()), FalseId);
         EXPECT_EQ(m->and2(m->False(), m->True()), FalseId);
@@ -256,6 +250,7 @@ public:
     }
 
     TEST_F(ManagerTest, or2_function) {
+
         // truth table
         EXPECT_EQ(m->or2(m->False(), m->False()), FalseId);
         EXPECT_EQ(m->or2(m->False(), m->True()), TrueId);
@@ -266,6 +261,7 @@ public:
     }
 
     TEST_F(ManagerTest, xor2_function) {
+
         // truth table
         EXPECT_EQ(m->xor2(m->False(), m->False()), FalseId);
         EXPECT_EQ(m->xor2(m->False(), m->True()), TrueId);
@@ -274,14 +270,15 @@ public:
     }
 
     TEST_F(ManagerTest, neg_function) {
-        // returns the ID representing the negation of the given function.
 
         // truth table
+        // returns the ID representing the negation of the given function.
         EXPECT_EQ(m->neg(m->True()), FalseId);
         EXPECT_EQ(m->neg(m->False()), TrueId);
     }
 
     TEST_F(ManagerTest, nand2_function) {
+
         // truth table
         EXPECT_EQ(m->nand2(m->False(), m->False()), TrueId);
         EXPECT_EQ(m->nand2(m->False(), m->True()), TrueId);
@@ -290,6 +287,7 @@ public:
     }
 
     TEST_F(ManagerTest, nor2_function) {
+
         // truth table
         EXPECT_EQ(m->nor2(m->False(), m->False()), TrueId);
         EXPECT_EQ(m->nor2(m->False(), m->True()), FalseId);
@@ -298,6 +296,7 @@ public:
     }
 
     TEST_F(ManagerTest, xnor2_function) {
+
         // truth table
         EXPECT_EQ(m->xnor2(m->False(), m->False()), TrueId);
         EXPECT_EQ(m->xnor2(m->False(), m->True()), FalseId);
@@ -307,6 +306,7 @@ public:
 
 
     TEST_F(ManagerTest, getTopVarName) {
+
         // returns the label of the given BDD_ID
         EXPECT_EQ(m->getTopVarName(m->False()), "False");
         EXPECT_EQ(m->getTopVarName(m->True()), "True");
@@ -314,6 +314,7 @@ public:
     }
 
     TEST_F(ManagerTest, findNodes) {
+
         BDD_ID a_or_b = m->or2(a, b);
         BDD_ID c_and_d = m->and2(c, d);
         BDD_ID f = m->and2(a_or_b, c_and_d);
@@ -328,12 +329,15 @@ public:
     }
 
     TEST_F(ManagerTest, findVars) {
+
         BDD_ID a_or_b = m->or2(a, b);
         BDD_ID c_and_d = m->and2(c, d);
+
         BDD_ID f = m->and2(a_or_b, c_and_d);
 
         std::set<BDD_ID> expected = {m->topVar(b), m->topVar(c), m->topVar(d)};
         std::set<BDD_ID> vars;
+
         m->findVars(m->and2(b, c_and_d), vars);
 
         EXPECT_EQ(vars, expected);
@@ -341,7 +345,9 @@ public:
 
     TEST_F(ManagerTest, uniqueTableSize) {
         BDD_ID size = m->uniqueTableSize();
+
         m->createVar("e");
+
         EXPECT_EQ(m->uniqueTableSize(), size + 1);
     }
 
