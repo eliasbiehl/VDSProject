@@ -104,8 +104,10 @@ namespace ClassProject {
         auto temp_2 = uTableRow(high, low, x);
         computed_tb.emplace(uTableRow(i, t, e), new_id);
         // Generate Label for Visualization
-        const auto label = "if " + unique_tb.at(x).label + " then " + unique_tb.at(high).label + " else " + unique_tb.at(low).label;
-        unique_tb.emplace(new_id, uTableRow(high, low, x, label));
+
+        // const auto label = "if " + unique_tb.at(x).label + " then " + unique_tb.at(high).label + " else " + unique_tb.at(low).label;
+        // unique_tb.emplace(new_id, uTableRow(high, low, x, label));
+        unique_tb.emplace(new_id, uTableRow(high, low, x));
 
         return new_id;
 
@@ -322,9 +324,9 @@ namespace ClassProject {
 
             //create Node in DOT-format
             if (vars_of_root.find(node) != vars_of_root.end()) {
-                file << "  " << node << " [label=\"" << nodeData.label << "\", shape=ellipse, color=blue];" << std::endl;
+                file << "  " << node << " [label=\"" << getTopVarName(topVar(node)) << "\", shape=ellipse, color=blue];" << std::endl;
             } else {
-                file << "  " << node << " [label=\"" << nodeData.label << "\", shape=box, color=black];" << std::endl;
+                file << "  " << node << " [label=\"" << getTopVarName(topVar(node)) << "\", shape=box, color=black];" << std::endl;
             }
 
             // Add edges to following high and low
