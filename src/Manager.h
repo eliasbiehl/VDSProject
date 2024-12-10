@@ -40,7 +40,12 @@ namespace ClassProject {
     {
         size_t operator()(const uTableRow& row) const
         {
-            return std::hash<BDD_ID>()(row.high) ^ std::hash<BDD_ID>()(row.low) ^ std::hash<BDD_ID>()(row.topVar);
+            // return std::hash<BDD_ID>()(row.high) ^ std::hash<BDD_ID>()(row.low) ^ std::hash<BDD_ID>()(row.topVar);
+            size_t seed = 0x9e3779b9; // Primzahl als Startwert
+            seed ^= std::hash<BDD_ID>()(row.high) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+            seed ^= std::hash<BDD_ID>()(row.low) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+            seed ^= std::hash<BDD_ID>()(row.topVar) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+            return seed;
         }
     };
 
