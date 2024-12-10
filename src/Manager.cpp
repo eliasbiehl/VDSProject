@@ -42,7 +42,7 @@ namespace ClassProject {
         return unique_tb.at(f).topVar;
     }
 
-    BDD_ID Manager::ite(const BDD_ID i, const BDD_ID t, const BDD_ID e){
+    BDD_ID Manager::ite(BDD_ID i, BDD_ID t, BDD_ID e){
         // Check for terminal cases
         if (i == True()) {
             return t;
@@ -51,13 +51,15 @@ namespace ClassProject {
         {
             return e;
         }
-        if (t == TrueId && e == FalseId) {
+        if (t == True() && e == False()) {
             return i;
         }
         if (t == e)
         {
             return t;
         }
+        if (!isConstant(t) && !isConstant(e))
+            standard_triples(i, t, e);
 
         // Check if node already exists
         const auto ite_entry = computed_tb.find(uTableRow(i, t, e));
@@ -161,6 +163,58 @@ namespace ClassProject {
 
     BDD_ID Manager::coFactorFalse(const BDD_ID f){
         return unique_tb.at(f).low;    
+    }
+
+    void Manager::swapID(BDD_ID &a, BDD_ID &b){
+        const BDD_ID temp = a;
+        a = b;
+        b = temp;
+    }
+
+    void Manager::standard_triples(BDD_ID &i, BDD_ID &t, BDD_ID &e){
+        //First, the following simplifications are applied to the arguments of the ite where possible:
+        if (i == t) //ite( F, F, G) => ite( F, 1, G)
+        {
+            t = True();
+        } else if (i == e) //ite( F, G, F) => ite( F, G, 0)
+        {
+            e = False();
+        } else if (i == neg(e))//ite( F, G, !F) => ite( F, G, 1)
+        {
+            e = True();
+        } else if (i == neg(t)) //ite( F, !F, G) => ite( F, 0, G)
+        {
+            t = False();
+        }
+        // First, the following simplifications are applied to the arguments of the ite where possible:
+        if (t == True() && i > e) //ite( F, 1, G) = ite( G, 1, F)
+        {
+            swapID(i, e);
+        } else if (e == False() && i > t) //ite( F, G, 0) = ite( F, G, 0)
+        {
+            swapID(i, t);
+        } else if (e == True() && i > t) //ite( F, G, 1) = ite( !G, !F, 1)
+        {
+            i = neg(i);
+            t = neg(t);
+            swapID(i, t);
+        } else if (t == False() && i > e) //ite( F, 0, G) = ite( !G, 0, !F)
+        {
+            e = neg(e);
+            i = neg(i);
+            swapID(i, e);
+        } else if (e == neg(t) && i > t) //ite( F, G, !G) = ite( G, F, !F)
+        {
+            e = neg(i);
+            swapID(i, t);
+        }
+        // Complement edges lead to the following equivalences:
+        if (i != t && i != e && t != e) {    // F != G != H
+            if (t > e) {                     // ite(F,G,H) = ite(!F,H,G)
+                i = neg(i);
+                swapID(t, e);
+            }
+        }
     }
 
     // Slide 2-15
@@ -286,5 +340,6 @@ namespace ClassProject {
         // Close file
         file.close();
     }
+
 }
 

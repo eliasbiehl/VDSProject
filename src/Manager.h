@@ -52,10 +52,6 @@ namespace ClassProject {
 
         void print_unique_tb();
 
-        static void swapID(BDD_ID *a, BDD_ID *b);
-
-        void standard_triples(BDD_ID *i, BDD_ID *t, BDD_ID *e);
-
         void init_unique_tb();
 
         BDD_ID get_nextID()
@@ -111,6 +107,10 @@ namespace ClassProject {
         BDD_ID coFactorTrue(BDD_ID f) override;
 
         BDD_ID coFactorFalse(BDD_ID f) override;
+
+        static void swapID(BDD_ID& a, BDD_ID& b);
+
+        void standard_triples(BDD_ID& i, BDD_ID& t, BDD_ID& e);
 
         BDD_ID and2(BDD_ID a, BDD_ID b) override;
 
