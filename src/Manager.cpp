@@ -10,15 +10,24 @@ namespace ClassProject {
     }
 
     void Manager::init_unique_tb() {
-        computed_tb[uTableRow {False(), False(), False(), "False"}] = False();
-        unique_tb.emplace(uniqueTableSize(), uTableRow {False(), False(), False(), "False"});
-        computed_tb[uTableRow{True(), True(), True(), "True"}] = True();
-        unique_tb.emplace(uniqueTableSize(), uTableRow{True(), True(), True(), "True"});
+        //computed_tb[uTableRow {False(), False(), False(), "False"}] = False();
+        // unique_tb.emplace(uniqueTableSize(), uTableRow {False(), False(), False(), "False"});
+        // rev_uniq_tb[uTableRow {False(), False(), False(), "False"}] = False();
+        // //computed_tb[uTableRow{True(), True(), True(), "True"}] = True();
+        // unique_tb.emplace(uniqueTableSize(), uTableRow{True(), True(), True(), "True"});
+        // rev_uniq_tb[uTableRow{True(), True(), True(), "True"}] = True();
+        unique_tb.emplace(uniqueTableSize(), uTableRow {False(), False(), False()});
+        rev_uniq_tb[uTableRow {False(), False(), False()}] = False();
+        unique_tb.emplace(uniqueTableSize(), uTableRow{True(), True(), True()});
+        rev_uniq_tb[uTableRow{True(), True(), True()}] = True();
     }
 
     BDD_ID Manager::createVar(const std::string &label){
         const BDD_ID id = get_nextID();
-        unique_tb.emplace(uniqueTableSize(), uTableRow{True(), False(), id, label});
+        // unique_tb.emplace(uniqueTableSize(), uTableRow{True(), False(), id, label});
+        // rev_uniq_tb[uTableRow{True(), False(), id, label}] = id;
+        unique_tb.emplace(uniqueTableSize(), uTableRow{True(), False(), id});
+        rev_uniq_tb[uTableRow{True(), False(), id}] = id;
         return id;
     }
 
@@ -42,7 +51,7 @@ namespace ClassProject {
         return unique_tb.at(f).topVar;
     }
 
-    BDD_ID Manager::ite(BDD_ID i, BDD_ID t, BDD_ID e){
+    BDD_ID Manager::ite(const BDD_ID i, const BDD_ID t, const BDD_ID e){
         // Check for terminal cases
         if (i == True()) {
             return t;
@@ -58,8 +67,48 @@ namespace ClassProject {
         {
             return t;
         }
-        if (!isConstant(t) && !isConstant(e))
-            standard_triples(i, t, e);
+
+        // Standard Triplets
+        if (i == t && !isConstant(t)) //ite( F, F, G) => ite( F, 1, G)
+        {
+            return ite(i, True(), e);
+        }
+        if (i == e) //ite( F, G, F) => ite( F, G, 0)
+        {
+            return ite(i, t, False());
+        }
+        if (i == neg(e))//ite( F, G, !F) => ite( F, G, 1)
+        {
+            return ite(i, t, True());
+        }
+        if (i == neg(t)) //ite( F, !F, G) => ite( F, 0, G)
+        {
+            return ite(i, False(), e);
+        }
+        // First, the following simplifications are applied to the arguments of the ite where possible:
+        // if (!isConstant(t) && !isConstant(e))
+        // {
+        //     if (t == True() && topVar(i) > topVar(e)) //ite( F, 1, G) = ite( G, 1, F)
+        //     {
+        //         return ite(e, t, i);
+        //     }
+        //     if (e == False() && topVar(i) > topVar(t)) //ite( F, G, 0) = ite( G, F, 0)
+        //     {
+        //         return ite(t, i, e);
+        //     }
+        //     if (e == True() && topVar(i) > topVar(t)) //ite( F, G, 1) = ite( !G, !F, 1)
+        //     {
+        //         return ite(neg(t), neg(i), True());
+        //     }
+        //     if (t == False() && topVar(i) > topVar(e)) //ite( F, 0, G) = ite( !G, 0, !F)
+        //     {
+        //         return ite(neg(e), False(), neg(i));
+        //     }
+        //     if (e == neg(t) && topVar(i) > topVar(t)) //ite( F, G, !G) = ite( G, F, !F)
+        //     {
+        //         return ite(t, i, neg(i));
+        //     }
+        // }
 
         // Check if node already exists
         const auto ite_entry = computed_tb.find(uTableRow(i, t, e));
@@ -90,24 +139,32 @@ namespace ClassProject {
         }
 
         // Check for entry already existing entry in computed table
-        for (BDD_ID id = False(); id < get_nextID(); id++)
+        // for (BDD_ID id = False(); id < get_nextID(); id++)
+        // {
+        //     if (topVar(id) == x && coFactorTrue(id) == high && coFactorFalse(id) == low)
+        //     {
+        //         return id;
+        //     }
+        // }
+        const auto uniq_entry = rev_uniq_tb.find(uTableRow(i, t, e));
+        if (uniq_entry != rev_uniq_tb.end())
         {
-            if (topVar(id) == x && coFactorTrue(id) == high && coFactorFalse(id) == low)
-            {
-                return id;
-            }
+            // Entry found -> return result
+            return uniq_entry->second;
         }
+
 
         // Entry not found
         // Add Entry
         const BDD_ID new_id = get_nextID();
         auto temp_2 = uTableRow(high, low, x);
         computed_tb.emplace(uTableRow(i, t, e), new_id);
+        unique_tb.emplace(new_id, uTableRow(high, low, x));
+        rev_uniq_tb[uTableRow{high, low, x}] = new_id;
         // Generate Label for Visualization
-
         // const auto label = "if " + unique_tb.at(x).label + " then " + unique_tb.at(high).label + " else " + unique_tb.at(low).label;
         // unique_tb.emplace(new_id, uTableRow(high, low, x, label));
-        unique_tb.emplace(new_id, uTableRow(high, low, x));
+
 
         return new_id;
 
@@ -255,7 +312,8 @@ namespace ClassProject {
     }
 
     std::string Manager::getTopVarName(const BDD_ID &root){
-        return unique_tb.at(topVar(root)).label;
+        // return unique_tb.at(topVar(root)).label;
+        return "dummy";
     }
 
     void Manager::findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root){

@@ -22,10 +22,10 @@ namespace ClassProject {
         BDD_ID high;
         BDD_ID low;
         BDD_ID topVar;
-        std::string label;
+        // std::string label;
 
-        uTableRow(BDD_ID high, BDD_ID low, BDD_ID topVar, const std::string& label)
-            : high(high), low(low), topVar(topVar), label(label) {}
+        // uTableRow(BDD_ID high, BDD_ID low, BDD_ID topVar, const std::string& label)
+        //     : high(high), low(low), topVar(topVar), label(label) {}
 
         uTableRow(BDD_ID high, BDD_ID low, BDD_ID top_var)
             : high(high), low(low), topVar(top_var) {}
@@ -53,6 +53,7 @@ namespace ClassProject {
     private:
         // std::vector<uTableRow> unique_tb;
         std::unordered_map<BDD_ID, uTableRow> unique_tb;
+        std::unordered_map<uTableRow, BDD_ID, uTableRowHash> rev_uniq_tb;
         std::unordered_map<uTableRow, BDD_ID, uTableRowHash> computed_tb;
 
         void print_unique_tb();
