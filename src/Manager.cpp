@@ -146,6 +146,7 @@ namespace ClassProject {
         //         return id;
         //     }
         // }
+        //const auto uniq_entry = rev_uniq_tb.find(uTableRow(high, low, x));
         const auto uniq_entry = rev_uniq_tb.find(uTableRow(i, t, e));
         if (uniq_entry != rev_uniq_tb.end())
         {
@@ -189,8 +190,18 @@ namespace ClassProject {
             return high;
         }
 
-        // compute result with ite-function
-        return ite(topVar(f), high, low);
+        auto entry = rev_uniq_tb.find(uTableRow{high, low, topVar(f)});
+        if (entry != rev_uniq_tb.end())
+        {
+            return entry->second;
+        }
+        BDD_ID new_id = get_nextID();
+        unique_tb.emplace(new_id, uTableRow{high, low, topVar(f)});
+        rev_uniq_tb[uTableRow{high, low, topVar(f)}] = new_id;
+        return new_id;
+
+        // // compute result with ite-function
+        // return ite(topVar(f), high, low);
     }
 
     BDD_ID Manager::coFactorFalse(const BDD_ID f, BDD_ID x){
@@ -211,8 +222,19 @@ namespace ClassProject {
         if (high == low) {
             return high;
         }
-        // compute result with ite-function
-        return ite(topVar(f), high, low);
+
+        auto entry = rev_uniq_tb.find(uTableRow{high, low, topVar(f)});
+        if (entry != rev_uniq_tb.end())
+        {
+            return entry->second;
+        }
+        BDD_ID new_id = get_nextID();
+        unique_tb.emplace(new_id, uTableRow{high, low, topVar(f)});
+        rev_uniq_tb[uTableRow{high, low, topVar(f)}] = new_id;
+        return new_id;
+
+        // // compute result with ite-function
+        // return ite(topVar(f), high, low);
 
     }
 
