@@ -146,7 +146,10 @@ namespace ClassProject {
         //         return id;
         //     }
         // }
+
+        // richtig aber Langsam!!!!!!!!!!!!!!!!!!!!!!!
         //const auto uniq_entry = rev_uniq_tb.find(uTableRow(high, low, x));
+        // falsch aber schneller !!!!!!!!!!!!!!!!!!!!!!
         const auto uniq_entry = rev_uniq_tb.find(uTableRow(i, t, e));
         if (uniq_entry != rev_uniq_tb.end())
         {
