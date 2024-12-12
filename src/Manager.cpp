@@ -139,19 +139,7 @@ namespace ClassProject {
             return high;
         }
 
-        // Check for entry already existing entry in computed table
-        // for (BDD_ID id = False(); id < get_nextID(); id++)
-        // {
-        //     if (topVar(id) == x && coFactorTrue(id) == high && coFactorFalse(id) == low)
-        //     {
-        //         return id;
-        //     }
-        // }
-
-        // richtig aber Langsam!!!!!!!!!!!!!!!!!!!!!!!
         const auto uniq_entry = rev_uniq_tb.find(uTableRow(high, low, x));
-        // falsch aber schneller !!!!!!!!!!!!!!!!!!!!!!
-        // const auto uniq_entry = rev_uniq_tb.find(uTableRow(i, t, e));
         if (uniq_entry != rev_uniq_tb.end())
         {
             computed_tb[uTableRow(i, t, e)] = uniq_entry->second;
@@ -194,18 +182,18 @@ namespace ClassProject {
             return high;
         }
 
-        auto entry = rev_uniq_tb.find(uTableRow{high, low, topVar(f)});
-        if (entry != rev_uniq_tb.end())
-        {
-            return entry->second;
-        }
-        BDD_ID new_id = get_nextID();
-        unique_tb.emplace(new_id, uTableRow{high, low, topVar(f)});
-        rev_uniq_tb[uTableRow{high, low, topVar(f)}] = new_id;
-        return new_id;
+        // auto entry = rev_uniq_tb.find(uTableRow{high, low, topVar(f)});
+        // if (entry != rev_uniq_tb.end())
+        // {
+        //     return entry->second;
+        // }
+        // BDD_ID new_id = get_nextID();
+        // unique_tb.emplace(new_id, uTableRow{high, low, topVar(f)});
+        // rev_uniq_tb[uTableRow{high, low, topVar(f)}] = new_id;
+        // return new_id;
 
-        // // compute result with ite-function
-        // return ite(topVar(f), high, low);
+        // compute result with ite-function
+        return ite(topVar(f), high, low);
     }
 
     BDD_ID Manager::coFactorFalse(const BDD_ID f, BDD_ID x){
@@ -227,18 +215,18 @@ namespace ClassProject {
             return high;
         }
 
-        auto entry = rev_uniq_tb.find(uTableRow{high, low, topVar(f)});
-        if (entry != rev_uniq_tb.end())
-        {
-            return entry->second;
-        }
-        BDD_ID new_id = get_nextID();
-        unique_tb.emplace(new_id, uTableRow{high, low, topVar(f)});
-        rev_uniq_tb[uTableRow{high, low, topVar(f)}] = new_id;
-        return new_id;
+        // auto entry = rev_uniq_tb.find(uTableRow{high, low, topVar(f)});
+        // if (entry != rev_uniq_tb.end())
+        // {
+        //     return entry->second;
+        // }
+        // BDD_ID new_id = get_nextID();
+        // unique_tb.emplace(new_id, uTableRow{high, low, topVar(f)});
+        // rev_uniq_tb[uTableRow{high, low, topVar(f)}] = new_id;
+        // return new_id;
 
-        // // compute result with ite-function
-        // return ite(topVar(f), high, low);
+        // compute result with ite-function
+        return ite(topVar(f), high, low);
 
     }
 
