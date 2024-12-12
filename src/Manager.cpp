@@ -135,6 +135,7 @@ namespace ClassProject {
 
         if (high == low)
         {
+            computed_tb[uTableRow(i, t, e)] = high;
             return high;
         }
 
@@ -148,12 +149,12 @@ namespace ClassProject {
         // }
 
         // richtig aber Langsam!!!!!!!!!!!!!!!!!!!!!!!
-        //const auto uniq_entry = rev_uniq_tb.find(uTableRow(high, low, x));
+        const auto uniq_entry = rev_uniq_tb.find(uTableRow(high, low, x));
         // falsch aber schneller !!!!!!!!!!!!!!!!!!!!!!
-        const auto uniq_entry = rev_uniq_tb.find(uTableRow(i, t, e));
+        // const auto uniq_entry = rev_uniq_tb.find(uTableRow(i, t, e));
         if (uniq_entry != rev_uniq_tb.end())
         {
-            // Entry found -> return result
+            computed_tb[uTableRow(i, t, e)] = uniq_entry->second;
             return uniq_entry->second;
         }
 
