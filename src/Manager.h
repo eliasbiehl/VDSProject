@@ -49,7 +49,7 @@ namespace ClassProject {
         }
     };
 
-  class Manager final : public ManagerInterface {
+  class Manager : public ManagerInterface {
     private:
         // std::vector<uTableRow> unique_tb;
         std::unordered_map<BDD_ID, uTableRow> unique_tb;
