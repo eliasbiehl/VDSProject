@@ -84,8 +84,7 @@ bool Reachability::isFixedPoint(const BDD_ID &current, const BDD_ID &next) {
 void Reachability::computeReachableStates() {
     BDD_ID transitionRelation = True();
     for (size_t i = 0; i < stateSize; ++i) {
-        transitionRelation = and2(transitionRelation, 
-                                  xor2(stateBits[i], transitionFunctions[i]));
+        transitionRelation = and2(transitionRelation, xnor2(stateBits[i], transitionFunctions[i]));
     }
 
     BDD_ID currentReachable = initialState;
@@ -108,6 +107,9 @@ bool Reachability::isReachable(const std::vector<bool> &stateVector) {
         throw std::runtime_error("State vector size mismatch with state size.");
     }
 
+    // Compute reachable states before checking
+    computeReachableStates();
+
     BDD_ID stateBDD = True();
     for (size_t i = 0; i < stateSize; ++i) {
         stateBDD = and2(stateBDD, stateVector[i] ? stateBits[i] : neg(stateBits[i]));
@@ -122,6 +124,13 @@ int Reachability::stateDistance(const std::vector<bool> &stateVector) {
         throw std::runtime_error("State vector size mismatch with state size.");
     }
 
+    // Build a local transition relation from the transition functions
+    BDD_ID transitionRelation = True();
+    for (size_t i = 0; i < stateSize; ++i) {
+        // Next state bit is given by transitionFunctions[i], so we use equivalence (xnor2)
+        transitionRelation = and2(transitionRelation, xnor2(stateBits[i], transitionFunctions[i]));
+    }
+
     // Target state as a BDD
     BDD_ID targetState = True();
     for (size_t i = 0; i < stateSize; ++i) {
@@ -131,7 +140,6 @@ int Reachability::stateDistance(const std::vector<bool> &stateVector) {
     // BFS initialization
     std::queue<std::pair<BDD_ID, int>> bfsQueue;
     std::set<BDD_ID> visited;
-
     bfsQueue.push({initialState, 0});
     visited.insert(initialState);
 
@@ -144,7 +152,8 @@ int Reachability::stateDistance(const std::vector<bool> &stateVector) {
             return currentDistance;
         }
 
-        BDD_ID nextStates = computeImage(currentState, reachableStates);
+        // Use transitionRelation for computing next states
+        BDD_ID nextStates = computeImage(currentState, transitionRelation);
         for (const auto &bit : stateBits) {
             BDD_ID trueState = coFactorTrue(nextStates, bit);
             BDD_ID falseState = coFactorFalse(nextStates, bit);
