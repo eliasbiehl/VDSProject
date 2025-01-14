@@ -53,6 +53,10 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/verify/)
 include_directories(${CMAKE_SOURCE_DIR}/src/verify/)
 link_directories(${CMAKE_SOURCE_DIR}/src/verify/)
 
+add_subdirectory(${CMAKE_SOURCE_DIR}/reachability)
+include_directories(${CMAKE_SOURCE_DIR}/reachability)
+link_directories(${CMAKE_SOURCE_DIR}/reachability)
+
 add_subdirectory(src)
 add_executable(VDSProject src/main.cpp)
 target_link_libraries(VDSProject Manager)
