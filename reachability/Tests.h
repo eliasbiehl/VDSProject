@@ -108,8 +108,7 @@ TEST_F(ReachabilityTest, ConstructorVarTest) {
     // test if correct number of state and input variables are created
     int stateSize = 13;
     int inputSize = 7;
-    std::unique_ptr<ClassProject::ReachabilityInterface> fsm = std::make_unique<ClassProject::Reachability>(stateSize,
-                                                                                                            inputSize);
+    std::unique_ptr<ClassProject::ReachabilityInterface> fsm = std::make_unique<ClassProject::Reachability>(stateSize, inputSize);
     std::vector<BDD_ID> stateVars = fsm->getStates();
     std::vector<BDD_ID> inputVars = fsm->getInputs();
     EXPECT_EQ(stateVars.size(), stateSize);

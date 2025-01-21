@@ -9,9 +9,11 @@ class Reachability : public ReachabilityInterface {
 private:
     unsigned int stateSize;
     unsigned int inputSize;
+    
     std::vector<BDD_ID> stateBits;
     std::vector<BDD_ID> inputBits;
     std::vector<BDD_ID> transitionFunctions;
+
     BDD_ID initialStates;
     BDD_ID reachableStates;
 
