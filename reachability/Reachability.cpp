@@ -20,7 +20,7 @@ Reachability::Reachability(unsigned int stateSize, unsigned int inputSize)
 
     // Create input bits, if any
     for (unsigned int i = 0; i < inputSize; ++i) {
-        inputBits.push_back(Manager::createVar("i" + std::to_string(i)));
+        inputBits.push_back(Manager::createVar("x" + std::to_string(i)));
     }
 
     // Initialize the transition function
