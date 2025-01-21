@@ -51,12 +51,12 @@ void Reachability::setInitState(const std::vector<bool> &stateVector) {
     reachableStates = stateBits[0];
 
     for (int i = 1; i < stateSize; ++i) {
-        if (stateVector[i])
+        if (stateVector.at(i))
         {
-            reachableStates = and2(reachableStates, stateBits[i]);
+            reachableStates = and2(reachableStates, stateBits.at(i));
         } else
         {
-            reachableStates = and2(reachableStates, neg(stateBits[i]));
+            reachableStates = and2(reachableStates, neg(stateBits.at(i)));
         }
     }
 }
@@ -69,7 +69,7 @@ void Reachability::setTransitionFunctions(const std::vector<BDD_ID> &transitionF
     }
     for (unsigned int i = 0; i < stateSize; ++i) {
         std::set<BDD_ID> tempSet = {};
-        Manager::findNodes(transitionFunctions[i], tempSet);
+        Manager::findNodes(transitionFunctions.at(i), tempSet);
         if (tempSet.empty())
         {
             throw std::runtime_error("Transition function does not exist.");
@@ -133,7 +133,7 @@ bool Reachability::isFixedPoint(const BDD_ID &current, const BDD_ID &next) {
 void Reachability::computeReachableStates() {
     BDD_ID transitionRelation = True();
     for (size_t i = 0; i < stateSize; ++i) {
-        transitionRelation = and2(transitionRelation, xnor2(stateBits[i], transitionFunctions[i]));
+        transitionRelation = and2(transitionRelation, xnor2(stateBits.at(i), transitionFunctions.at(i)));
     }
 
     BDD_ID currentReachable = reachableStates;
@@ -160,7 +160,7 @@ bool Reachability::isReachable(const std::vector<bool> &stateVector) {
 
     BDD_ID stateBDD = True();
     for (size_t i = 0; i < stateSize; ++i) {
-        stateBDD = and2(stateBDD, stateVector[i] ? stateBits[i] : neg(stateBits[i]));
+        stateBDD = and2(stateBDD, stateVector.at(i) ? stateBits.at(i) : neg(stateBits.at(i)));
     }
 
     return and2(reachableStates, stateBDD) != False();
