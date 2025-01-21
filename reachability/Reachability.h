@@ -12,12 +12,12 @@ private:
     std::vector<BDD_ID> stateBits;
     std::vector<BDD_ID> inputBits;
     std::vector<BDD_ID> transitionFunctions;
-    BDD_ID initialState;
-    BDD_ID reachableStates;
+    BDD_ID initialStates{};
+    BDD_ID reachableStates{};
 
     // Helper methods for symbolic traversal
     BDD_ID computeImage(const BDD_ID &currentStates, const BDD_ID &transitionRelation);
-    bool isFixedPoint(const BDD_ID &current, const BDD_ID &next);
+    static bool isFixedPoint(const BDD_ID &current, const BDD_ID &next);
 
 public:
     // Constructor

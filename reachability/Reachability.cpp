@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <queue>
 #include <set>
+#include <sys/stat.h>
 
 namespace ClassProject {
 
@@ -14,21 +15,23 @@ Reachability::Reachability(unsigned int stateSize, unsigned int inputSize)
 
     // Create state bits
     for (unsigned int i = 0; i < stateSize; ++i) {
-        stateBits.push_back(createVar("s" + std::to_string(i)));
+        stateBits.push_back(Manager::createVar("s" + std::to_string(i)));
     }
 
     // Create input bits, if any
     for (unsigned int i = 0; i < inputSize; ++i) {
-        inputBits.push_back(createVar("i" + std::to_string(i)));
+        inputBits.push_back(Manager::createVar("i" + std::to_string(i)));
+    }
+
+    // Initialize the transition function
+    for (unsigned int i = 0; i < stateSize; ++i)
+    {
+        transitionFunctions.push_back(stateBits[i]);
     }
 
     // Initialize the reachable states to the initial state (default all false)
-    initialState = False();
-    for (const auto &bit : stateBits) {
-        initialState = and2(initialState, neg(bit));
-    }
-
-    reachableStates = initialState;
+    const std::vector<bool> temp(stateSize, false);
+    Reachability::setInitState(temp);
 }
 
 // Get state bits
@@ -41,6 +44,60 @@ const std::vector<BDD_ID> &Reachability::getInputs() const {
     return inputBits;
 }
 
+
+// Set initial state
+void Reachability::setInitState(const std::vector<bool> &stateVector) {
+    if (stateVector.size() != stateSize) {
+        throw std::runtime_error("Initial state size mismatch with state size.");
+    }
+
+    reachableStates = stateBits[0];
+
+    for (int i = 1; i < stateSize; ++i) {
+        if (stateVector[i])
+        {
+            reachableStates = and2(reachableStates, stateBits[i]);
+        } else
+        {
+            reachableStates = and2(reachableStates, neg(stateBits[i]));
+        }
+    }
+}
+
+
+    // Compute state distance using BFS-like approach
+    int Reachability::stateDistance(const std::vector<bool> &stateVector)
+{
+    if (stateVector.size() != stateSize) {
+        throw std::runtime_error("State vector size mismatch with state size.");
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//TODO **************************************************************
+
+
+
+
 // Set transition functions
 void Reachability::setTransitionFunctions(const std::vector<BDD_ID> &transitionFunctions) {
     if (transitionFunctions.size() != stateSize) {
@@ -50,19 +107,6 @@ void Reachability::setTransitionFunctions(const std::vector<BDD_ID> &transitionF
     this->transitionFunctions = transitionFunctions;
 }
 
-// Set initial state
-void Reachability::setInitState(const std::vector<bool> &stateVector) {
-    if (stateVector.size() != stateSize) {
-        throw std::runtime_error("Initial state size mismatch with state size.");
-    }
-
-    initialState = True();
-    for (size_t i = 0; i < stateSize; ++i) {
-        initialState = and2(initialState, stateVector[i] ? stateBits[i] : neg(stateBits[i]));
-    }
-
-    reachableStates = initialState;
-}
 
 // Compute the image of the current state
 BDD_ID Reachability::computeImage(const BDD_ID &currentStates, const BDD_ID &transitionRelation) {
@@ -87,11 +131,10 @@ void Reachability::computeReachableStates() {
         transitionRelation = and2(transitionRelation, xnor2(stateBits[i], transitionFunctions[i]));
     }
 
-    BDD_ID currentReachable = initialState;
-    BDD_ID nextReachable;
+    BDD_ID currentReachable = reachableStates;
 
     do {
-        nextReachable = or2(currentReachable, computeImage(currentReachable, transitionRelation));
+        BDD_ID nextReachable = or2(currentReachable, computeImage(currentReachable, transitionRelation));
         if (isFixedPoint(currentReachable, nextReachable)) {
             break;
         }
@@ -118,58 +161,5 @@ bool Reachability::isReachable(const std::vector<bool> &stateVector) {
     return and2(reachableStates, stateBDD) != False();
 }
 
-// Compute state distance using BFS-like approach
-int Reachability::stateDistance(const std::vector<bool> &stateVector) {
-    if (stateVector.size() != stateSize) {
-        throw std::runtime_error("State vector size mismatch with state size.");
-    }
-
-    // Build a local transition relation from the transition functions
-    BDD_ID transitionRelation = True();
-    for (size_t i = 0; i < stateSize; ++i) {
-        // Next state bit is given by transitionFunctions[i], so we use equivalence (xnor2)
-        transitionRelation = and2(transitionRelation, xnor2(stateBits[i], transitionFunctions[i]));
-    }
-
-    // Target state as a BDD
-    BDD_ID targetState = True();
-    for (size_t i = 0; i < stateSize; ++i) {
-        targetState = and2(targetState, stateVector[i] ? stateBits[i] : neg(stateBits[i]));
-    }
-
-    // BFS initialization
-    std::queue<std::pair<BDD_ID, int>> bfsQueue;
-    std::set<BDD_ID> visited;
-    bfsQueue.push({initialState, 0});
-    visited.insert(initialState);
-
-    while (!bfsQueue.empty()) {
-        BDD_ID currentState = bfsQueue.front().first;
-        int currentDistance = bfsQueue.front().second;
-        bfsQueue.pop();
-
-        if (and2(currentState, targetState) != False()) {
-            return currentDistance;
-        }
-
-        // Use transitionRelation for computing next states
-        BDD_ID nextStates = computeImage(currentState, transitionRelation);
-        for (const auto &bit : stateBits) {
-            BDD_ID trueState = coFactorTrue(nextStates, bit);
-            BDD_ID falseState = coFactorFalse(nextStates, bit);
-
-            if (visited.find(trueState) == visited.end()) {
-                bfsQueue.push({trueState, currentDistance + 1});
-                visited.insert(trueState);
-            }
-            if (visited.find(falseState) == visited.end()) {
-                bfsQueue.push({falseState, currentDistance + 1});
-                visited.insert(falseState);
-            }
-        }
-    }
-
-    return -1; // Unreachable
-}
 
 } // namespace ClassProject
