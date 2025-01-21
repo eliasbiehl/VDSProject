@@ -24,10 +24,7 @@ Reachability::Reachability(unsigned int stateSize, unsigned int inputSize)
     }
 
     // Initialize the transition function
-    for (unsigned int i = 0; i < stateSize; ++i)
-    {
-        transitionFunctions.push_back(stateBits[i]);
-    }
+    Reachability::setTransitionFunctions(stateBits);
 
     // Initialize the reachable states to the initial state (default all false)
     const std::vector<bool> temp(stateSize, false);
@@ -64,7 +61,54 @@ void Reachability::setInitState(const std::vector<bool> &stateVector) {
     }
 }
 
+// Set transition functions
+void Reachability::setTransitionFunctions(const std::vector<BDD_ID> &transitionFunctions)
+{
+    if (transitionFunctions.size() != stateSize) {
+        throw std::runtime_error("Transition function size mismatch with state size.");
+    }
+    for (unsigned int i = 0; i < stateSize; ++i) {
+        std::set<BDD_ID> tempSet = {};
+        Manager::findNodes(transitionFunctions[i], tempSet);
+        if (tempSet.empty())
+        {
+            throw std::runtime_error("Transition function does not exist.");
+        }
+    }
 
+    this->transitionFunctions = transitionFunctions;
+}
+
+// Compute the image of the current state
+BDD_ID Reachability::computeImage(const BDD_ID &currentStates, const BDD_ID &transitionRelation) {
+    BDD_ID temp = and2(currentStates, transitionRelation);
+
+    for (const auto &state_bit : stateBits) {
+        temp = or2(coFactorTrue(temp, state_bit), coFactorFalse(temp, state_bit));
+    }
+
+    BDD_ID img = and2(temp, initialStates);
+
+    for (const auto &state_bit : stateBits)
+    {
+        // TODO aktuell noch state_bit statt state_bit'
+        img = or2(coFactorTrue(img, state_bit), coFactorFalse(img, state_bit));
+    }
+
+    return img;
+}
+
+
+//TODO **************************************************************
+
+    // Check if a state is reachable
+    bool Reachability::isReachable(const std::vector<bool> &stateVector) {
+    if (stateVector.size() != stateSize) {
+        throw std::runtime_error("State vector size mismatch with state size.");
+    }
+
+
+}
     // Compute state distance using BFS-like approach
     int Reachability::stateDistance(const std::vector<bool> &stateVector)
 {
@@ -72,52 +116,13 @@ void Reachability::setInitState(const std::vector<bool> &stateVector) {
         throw std::runtime_error("State vector size mismatch with state size.");
     }
 
+    return -1;
 }
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//TODO **************************************************************
-
-
-
-
-// Set transition functions
-void Reachability::setTransitionFunctions(const std::vector<BDD_ID> &transitionFunctions) {
-    if (transitionFunctions.size() != stateSize) {
-        throw std::runtime_error("Transition function size mismatch with state size.");
-    }
-
-    this->transitionFunctions = transitionFunctions;
-}
-
-
-// Compute the image of the current state
-BDD_ID Reachability::computeImage(const BDD_ID &currentStates, const BDD_ID &transitionRelation) {
-    BDD_ID temp = and2(currentStates, transitionRelation);
-
-    for (const auto &bit : stateBits) {
-        temp = or2(coFactorTrue(temp, bit), coFactorFalse(temp, bit));
-    }
-
-    return temp;
-}
 
 // Check if a fixed point is reached
 bool Reachability::isFixedPoint(const BDD_ID &current, const BDD_ID &next) {
