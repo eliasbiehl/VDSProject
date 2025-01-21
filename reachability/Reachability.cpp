@@ -48,7 +48,7 @@ void Reachability::setInitState(const std::vector<bool> &stateVector) {
         throw std::runtime_error("Initial state size mismatch with state size.");
     }
 
-    reachableStates = stateBits[0];
+    reachableStates = stateBits.at(0);
 
     for (int i = 1; i < stateSize; ++i) {
         if (stateVector.at(i))
