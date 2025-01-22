@@ -24,6 +24,7 @@ private:
     BDD_ID computeImage(const BDD_ID &currentStates, const BDD_ID &transitionRelation);
     static bool isFixedPoint(const BDD_ID &current, const BDD_ID &next);
     const BDD_ID &getCR() const;
+    bool isReachableInSet(const std::vector<bool> &stateVector, const BDD_ID &stateSet);
 
     BDD_ID Reachability::computeTransitionRelation();
 

@@ -129,9 +129,7 @@ BDD_ID Reachability::computeTransitionRelation()
 
 }
 
-
-
-    // Check if a state is reachable
+// Check if a state is reachable
 bool Reachability::isReachable(const std::vector<bool> &stateVector) {
     if (stateVector.size() != stateSize) {
         throw std::runtime_error("State vector size mismatch with state size.");
@@ -154,8 +152,30 @@ bool Reachability::isReachable(const std::vector<bool> &stateVector) {
     return false;
 }
 
-    // Compute reachable states
-    void Reachability::computeReachableStates() {
+// Check if a state is reachable in a given ROBDD
+bool Reachability::isReachableInSet(const std::vector<bool> &stateVector, const BDD_ID &stateSet) {
+    if (stateVector.size() != stateSize) {
+        throw std::runtime_error("State vector size mismatch with state size.");
+    }
+    BDD_ID tmp = stateSet;
+    for (int i = 0; i < stateSize; ++i) {
+        if (stateVector.at(i))
+        {
+            tmp = coFactorTrue(tmp, stateBits.at(i));
+        } else
+        {
+            tmp = coFactorFalse(tmp, stateBits.at(i));
+        }
+        if (tmp <= Manager::True())
+        {
+            return tmp;
+        }
+    }
+    return false;
+}
+
+// Compute reachable states
+void Reachability::computeReachableStates() {
     BDD_ID tau = computeTransitionRelation();
     BDD_ID Crit = initialStates;
     BDD_ID img, Cr;
@@ -170,46 +190,31 @@ bool Reachability::isReachable(const std::vector<bool> &stateVector) {
     reachableStates = Cr;
 }
 
-//TODO **************************************************************
-
-
-
-
-    // Compute state distance using BFS-like approach
-    int Reachability::stateDistance(const std::vector<bool> &stateVector)
-{
+// Compute state distance using BFS-like approach
+int Reachability::stateDistance(const std::vector<bool> &stateVector) {
     if (stateVector.size() != stateSize) {
         throw std::runtime_error("State vector size mismatch with state size.");
     }
     int cnt = 0;
-    BDD_ID tmp = reachableStates;
-    for (int i = 0; i < stateSize; ++i) {
-        if (stateVector.at(i))
-        {
-            tmp = coFactorTrue(tmp, stateBits.at(i));
-            cnt++;
-        } else
-        {
-            tmp = coFactorFalse(tmp, stateBits.at(i));
-            cnt++;
-        }
+    BDD_ID tau = computeTransitionRelation();
+    BDD_ID Crit = initialStates;
+    BDD_ID img, Cr;
+    if(isReachableInSet(stateVector, Crit))
+    {
+        return 0;
     }
-    if (tmp <=)
-
+    do
+    {
+        Cr = Crit;
+        img = computeImage(Cr, tau);
+        Crit = or2(img, Cr);
+        cnt++;
+        if (isReachableInSet(stateVector, Cr))
+        {
+            return cnt;
+        }
+    } while (Cr != Crit);
     return -1;
 }
-
-
-
-
-
-
-// Check if a fixed point is reached
-bool Reachability::isFixedPoint(const BDD_ID &current, const BDD_ID &next) {
-    return current == next;
-}
-
-
-
 
 } // namespace ClassProject
