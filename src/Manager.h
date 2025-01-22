@@ -78,6 +78,11 @@ namespace ClassProject {
         const BDD_ID &False() override;
 
 
+      std::unordered_map<BDD_ID, uTableRow> getUniqueTable()
+      {
+        return unique_tb;
+      }
+
       bool computedTableContains(const uTableRow& row) const {
           return computed_tb.find(row) != computed_tb.end();
       }

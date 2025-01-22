@@ -16,6 +16,7 @@ Reachability::Reachability(unsigned int stateSize, unsigned int inputSize)
     // Create state bits
     for (unsigned int i = 0; i < stateSize; ++i) {
         stateBits.push_back(Manager::createVar("s" + std::to_string(i)));
+        nextStateBits.push_back(Manager::createVar("s'" + std::to_string(i)));
     }
 
     // Create input bits, if any
@@ -87,34 +88,113 @@ BDD_ID Reachability::computeImage(const BDD_ID &currentStates, const BDD_ID &tra
         temp = or2(coFactorTrue(temp, state_bit), coFactorFalse(temp, state_bit));
     }
 
-    BDD_ID img = and2(temp, initialStates);
+    // Part 3 image computation (8.1 in document)
+    BDD_ID img = xnor2(stateBits.at(0), nextStateBits.at(0));
+    img = and2(img, temp);
 
-    for (const auto &state_bit : stateBits)
+    for (int i = 1; i < stateSize; ++i)
     {
-        // TODO aktuell noch state_bit statt state_bit'
-        img = or2(coFactorTrue(img, state_bit), coFactorFalse(img, state_bit));
+        temp = and2(temp, xnor2(stateBits.at(i), nextStateBits.at(i)));
+        img = and2(img, temp);
     }
+
+    // Part 3 image computation (8.2 in document)
+    for (int i = stateSize - 1; i >= 0; --i)
+    {
+        img = or2(coFactorTrue(img, nextStateBits.at(i)), coFactorFalse(img, nextStateBits.at(i)));
+    }
+
 
     return img;
 }
 
 
-//TODO **************************************************************
+BDD_ID Reachability::computeTransitionRelation()
+{
+    if (nextStateBits.size() != transitionFunctions.size())
+    {
+        throw std::runtime_error("Transition function size mismatch with state size.");
+    }
+
+    BDD_ID tau =  xnor2(nextStateBits.at(0), transitionFunctions.at(0)); //,  and2(not(nextStateBits.at(0)), not(transitionFunction.at(0))));
+    BDD_ID tmp;
+
+    for(int i = 1; i < nextStateBits.size(); ++i)
+    {
+        tmp = xnor2(nextStateBits.at(i), transitionFunctions.at(i));//or2(and2(nextStateBits.at(i), transitionFunction.at(i)),  and2(not(nextStateBits.at(i)), not(transitionFunction.at(i))));
+        tau = and2(tmp,tau);
+    }
+
+    return tau;
+
+}
+
+
 
     // Check if a state is reachable
-    bool Reachability::isReachable(const std::vector<bool> &stateVector) {
+bool Reachability::isReachable(const std::vector<bool> &stateVector) {
     if (stateVector.size() != stateSize) {
         throw std::runtime_error("State vector size mismatch with state size.");
     }
-
-
+    computeReachableStates();
+    BDD_ID tmp = reachableStates;
+    for (int i = 0; i < stateSize; ++i) {
+        if (stateVector.at(i))
+        {
+            tmp = coFactorTrue(tmp, stateBits.at(i));
+        } else
+        {
+            tmp = coFactorFalse(tmp, stateBits.at(i));
+        }
+        if (tmp <= Manager::True())
+        {
+            return tmp;
+        }
+    }
+    return false;
 }
+
+    // Compute reachable states
+    void Reachability::computeReachableStates() {
+    BDD_ID tau = computeTransitionRelation();
+    BDD_ID Crit = initialStates;
+    BDD_ID img, Cr;
+
+    do
+    {
+        Cr = Crit;
+        img = computeImage(Cr, tau);
+        Crit = or2(img, Cr);
+    } while (Cr != Crit);
+
+    reachableStates = Cr;
+}
+
+//TODO **************************************************************
+
+
+
+
     // Compute state distance using BFS-like approach
     int Reachability::stateDistance(const std::vector<bool> &stateVector)
 {
     if (stateVector.size() != stateSize) {
         throw std::runtime_error("State vector size mismatch with state size.");
     }
+    int cnt = 0;
+    BDD_ID tmp = reachableStates;
+    for (int i = 0; i < stateSize; ++i) {
+        if (stateVector.at(i))
+        {
+            tmp = coFactorTrue(tmp, stateBits.at(i));
+            cnt++;
+        } else
+        {
+            tmp = coFactorFalse(tmp, stateBits.at(i));
+            cnt++;
+        }
+    }
+    if (tmp <=)
 
     return -1;
 }
@@ -129,42 +209,7 @@ bool Reachability::isFixedPoint(const BDD_ID &current, const BDD_ID &next) {
     return current == next;
 }
 
-// Compute reachable states
-void Reachability::computeReachableStates() {
-    BDD_ID transitionRelation = True();
-    for (size_t i = 0; i < stateSize; ++i) {
-        transitionRelation = and2(transitionRelation, xnor2(stateBits.at(i), transitionFunctions.at(i)));
-    }
 
-    BDD_ID currentReachable = reachableStates;
-
-    do {
-        BDD_ID nextReachable = or2(currentReachable, computeImage(currentReachable, transitionRelation));
-        if (isFixedPoint(currentReachable, nextReachable)) {
-            break;
-        }
-        currentReachable = nextReachable;
-    } while (true);
-
-    reachableStates = currentReachable;
-}
-
-// Check if a state is reachable
-bool Reachability::isReachable(const std::vector<bool> &stateVector) {
-    if (stateVector.size() != stateSize) {
-        throw std::runtime_error("State vector size mismatch with state size.");
-    }
-
-    // Compute reachable states before checking
-    computeReachableStates();
-
-    BDD_ID stateBDD = True();
-    for (size_t i = 0; i < stateSize; ++i) {
-        stateBDD = and2(stateBDD, stateVector.at(i) ? stateBits.at(i) : neg(stateBits.at(i)));
-    }
-
-    return and2(reachableStates, stateBDD) != False();
-}
 
 
 } // namespace ClassProject

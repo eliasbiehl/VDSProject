@@ -11,15 +11,21 @@ private:
     unsigned int inputSize;
     
     std::vector<BDD_ID> stateBits;
+    std::vector<BDD_ID> nextStateBits;
     std::vector<BDD_ID> inputBits;
     std::vector<BDD_ID> transitionFunctions;
 
     BDD_ID initialStates;
     BDD_ID reachableStates; // <--- Needs to be an vector holding boolean values
 
+    BDD_ID Cr;
+
     // Helper methods for symbolic traversal
     BDD_ID computeImage(const BDD_ID &currentStates, const BDD_ID &transitionRelation);
     static bool isFixedPoint(const BDD_ID &current, const BDD_ID &next);
+    const BDD_ID &getCR() const;
+
+    BDD_ID Reachability::computeTransitionRelation();
 
 public:
     // Constructor
@@ -35,6 +41,8 @@ public:
     int stateDistance(const std::vector<bool> &stateVector) override;
     void setTransitionFunctions(const std::vector<BDD_ID> &transitionFunctions) override;
     void setInitState(const std::vector<bool> &stateVector) override;
+
+
 
     // Additional utility methods if needed
     void computeReachableStates();
