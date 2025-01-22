@@ -25,8 +25,7 @@ private:
     static bool isFixedPoint(const BDD_ID &current, const BDD_ID &next);
     const BDD_ID &getCR() const;
     bool isReachableInSet(const std::vector<bool> &stateVector, const BDD_ID &stateSet);
-
-    BDD_ID Reachability::computeTransitionRelation();
+    BDD_ID computeTransitionRelation();
 
 public:
     // Constructor
