@@ -30,6 +30,8 @@ Reachability::Reachability(unsigned int stateSize, unsigned int inputSize)
     // Initialize the reachable states to the initial state (default all false)
     const std::vector<bool> temp(stateSize, false);
     Reachability::setInitState(temp);
+
+
 }
 
 // Get state bits
@@ -49,15 +51,16 @@ void Reachability::setInitState(const std::vector<bool> &stateVector) {
         throw std::runtime_error("Initial state size mismatch with state size.");
     }
 
-    reachableStates = stateBits.at(0);
+    initialStates = Manager::True();
 
-    for (int i = 1; i < stateSize; ++i) {
+
+    for (int i = 0; i < stateSize; ++i) { //TODO change to iterator range based for loops
         if (stateVector.at(i))
         {
-            reachableStates = and2(reachableStates, stateBits.at(i));
+            initialStates = and2(initialStates, stateBits.at(i));
         } else
         {
-            reachableStates = and2(reachableStates, neg(stateBits.at(i)));
+            initialStates = and2(initialStates, neg(stateBits.at(i)));
         }
     }
 }
@@ -68,6 +71,16 @@ void Reachability::setTransitionFunctions(const std::vector<BDD_ID> &transitionF
     if (transitionFunctions.size() != stateSize) {
         throw std::runtime_error("Transition function size mismatch with state size.");
     }
+
+    //TODO check whether transition function is part of BDD -> see test
+    for (const auto transition_id : transitionFunctions)
+    {
+        if (Manager::uniqueTableSize() < transition_id)
+        {
+            throw std::runtime_error("Transition function does not exist.");
+        }
+    }
+
     for (unsigned int i = 0; i < stateSize; ++i) {
         std::set<BDD_ID> tempSet = {};
         Manager::findNodes(transitionFunctions.at(i), tempSet);
@@ -146,7 +159,7 @@ bool Reachability::isReachable(const std::vector<bool> &stateVector) {
         }
         if (tmp <= Manager::True())
         {
-            return tmp;
+            return (tmp == Manager::True());
         }
     }
     return false;

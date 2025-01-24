@@ -9,13 +9,23 @@ using namespace ClassProject;
 struct ReachabilityTest : testing::Test {
 
     std::unique_ptr<ClassProject::ReachabilityInterface> fsm = std::make_unique<ClassProject::Reachability>(2);
-
+    std::unique_ptr<ClassProject::ReachabilityInterface> fsm1 = std::make_unique<ClassProject::Reachability>(1);
     std::vector<BDD_ID> stateVars2 = fsm->getStates();
     std::vector<BDD_ID> transitionFunctions;
 
     BDD_ID s0 = stateVars2.at(0);
     BDD_ID s1 = stateVars2.at(1);
 };
+
+
+//TODO add a bigger and more complex test case -> see exceptions
+
+TEST_F(ReachabilityTest, DefaultTest) { /* NOLINT */
+
+
+    ASSERT_TRUE(fsm1->isReachable({false}));
+
+}
 
 TEST_F(ReachabilityTest, HowTo_Example) { /* NOLINT */
 
