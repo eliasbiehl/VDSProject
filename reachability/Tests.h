@@ -11,10 +11,13 @@ struct ReachabilityTest : testing::Test {
     std::unique_ptr<ClassProject::ReachabilityInterface> fsm = std::make_unique<ClassProject::Reachability>(2);
     std::unique_ptr<ClassProject::ReachabilityInterface> fsm1 = std::make_unique<ClassProject::Reachability>(1);
     std::vector<BDD_ID> stateVars2 = fsm->getStates();
+
     std::vector<BDD_ID> transitionFunctions;
 
     BDD_ID s0 = stateVars2.at(0);
     BDD_ID s1 = stateVars2.at(1);
+
+
 };
 
 
@@ -171,6 +174,41 @@ TEST_F(ReachabilityTest, SingleInputTest) {
     EXPECT_TRUE(fsm->isReachable({true}));
 }
 
+TEST_F(ReachabilityTest, ComplexOBDDTest)
+{
+
+    std::unique_ptr<ClassProject::ReachabilityInterface> fsm4 = std::make_unique<ClassProject::Reachability>(4, 1);
+
+    std::vector<BDD_ID> stateVars = fsm4->getStates();
+    std::vector<BDD_ID> inputVars = fsm4->getInputs();
+    std::vector<BDD_ID> transitionFunctions;
+
+    BDD_ID s0 = stateVars.at(0);
+    BDD_ID s1 = stateVars.at(1);
+    BDD_ID s2 = stateVars.at(2);
+    BDD_ID s3 = stateVars.at(3);
+    BDD_ID x0 = inputVars.at(0);
+
+    transitionFunctions.push_back(fsm4->or2(fsm4));
+    transitionFunctions.push_back(fsm4->or2(fsm4->and2(s0, x0), fsm4->and2(s3, fsm4->neg(x0))));
+    transitionFunctions.push_back(fsm4->or2(fsm4->and2(s0, x0), fsm4->and2(s3, fsm4->neg(x0))));
+    transitionFunctions.push_back(fsm4->or2(fsm4->and2(s2, x0), fsm4->and2(s0, fsm4->neg(x0))));
+
+    fsm4->setTransitionFunctions(transitionFunctions);
+    fsm4->setInitState({false, false, false, false});
+    EXPECT_FALSE(fsm4->isReachable({false,true,false,false}));
+    EXPECT_TRUE(fsm4->isReachable({true,false,false,false}));
+    EXPECT_TRUE(fsm4->isReachable({false,true,false,false}));
+    EXPECT_TRUE(fsm4->isReachable({true,false,true,false}));
+    EXPECT_TRUE(fsm4->isReachable({false,false,false,true}));
+    fsm4->setInitState({false,true,false,false});
+    EXPECT_TRUE(fsm4->isReachable({false,true,false,false}));
+    EXPECT_TRUE(fsm4->isReachable({true,false,false,false}));
+    EXPECT_TRUE(fsm4->isReachable({false,true,false,false}));
+    EXPECT_TRUE(fsm4->isReachable({true,false,true,false}));
+    EXPECT_TRUE(fsm4->isReachable({false,false,false,true}));
+}
+
 TEST(Distance_Test, distanceExample) { /* NOLINT */
     std::unique_ptr<ClassProject::Reachability> distanceFSM = std::make_unique<ClassProject::Reachability>(2,1);
     std::vector<BDD_ID> stateVars6 = distanceFSM->getStates();
@@ -257,5 +295,8 @@ TEST(Distance_Test, distanceExample) { /* NOLINT */
     ASSERT_EQ (distanceFSM->stateDistance({true, false}), 2);
 
 }
+
+
+
 
 #endif
