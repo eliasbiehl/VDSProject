@@ -97,8 +97,13 @@ void Reachability::setTransitionFunctions(const std::vector<BDD_ID> &transitionF
 BDD_ID Reachability::computeImage(const BDD_ID &currentStates, const BDD_ID &transitionRelation) {
     BDD_ID temp = and2(currentStates, transitionRelation);
 
+    // existential Quantification
     for (const auto &state_bit : stateBits) {
         temp = or2(coFactorTrue(temp, state_bit), coFactorFalse(temp, state_bit));
+    }
+    for (const auto &input_bit : inputBits)
+    {
+        temp = or2(coFactorTrue(temp, input_bit), coFactorFalse(temp, input_bit));
     }
 
     // Part 3 image computation (8.1 in document)
@@ -181,7 +186,7 @@ bool Reachability::isReachableInSet(const std::vector<bool> &stateVector, const 
         }
         if (tmp <= Manager::True())
         {
-            return tmp;
+            return tmp == Manager::True();
         }
     }
     return false;
@@ -212,20 +217,16 @@ int Reachability::stateDistance(const std::vector<bool> &stateVector) {
     BDD_ID tau = computeTransitionRelation();
     BDD_ID Crit = initialStates;
     BDD_ID img, Cr;
-    if(isReachableInSet(stateVector, Crit))
-    {
-        return 0;
-    }
     do
     {
         Cr = Crit;
         img = computeImage(Cr, tau);
         Crit = or2(img, Cr);
-        cnt++;
         if (isReachableInSet(stateVector, Cr))
         {
             return cnt;
         }
+        cnt++;
     } while (Cr != Crit);
     return -1;
 }
