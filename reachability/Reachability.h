@@ -16,9 +16,9 @@ private:
     std::vector<BDD_ID> transitionFunctions;
 
     BDD_ID initialStates;
-    BDD_ID reachableStates; // <--- Needs to be an vector holding boolean values
+    BDD_ID reachableStates;
 
-    BDD_ID Cr;
+    //BDD_ID Cr;
 
     // Helper methods for symbolic traversal
     BDD_ID computeImage(const BDD_ID &currentStates, const BDD_ID &transitionRelation);
