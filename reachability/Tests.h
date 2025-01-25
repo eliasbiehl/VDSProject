@@ -217,12 +217,6 @@ TEST_F(ReachabilityTest, ComplexOBDDTest)
     EXPECT_FALSE(fsm4->isReachable({false,true,true,false}));
     EXPECT_FALSE(fsm4->isReachable({true,true,true,false}));
     EXPECT_FALSE(fsm4->isReachable({false,false,false,true}));
-    // fsm4->setInitState({false,true,false,false});
-    // EXPECT_TRUE(fsm4->isReachable({false,true,false,false}));
-    // EXPECT_TRUE(fsm4->isReachable({true,false,false,false}));
-    // EXPECT_TRUE(fsm4->isReachable({false,true,false,false}));
-    // EXPECT_TRUE(fsm4->isReachable({true,false,true,false}));
-    // EXPECT_TRUE(fsm4->isReachable({false,false,false,true}));
 }
 
 TEST(Distance_Test, distanceExample) { /* NOLINT */
