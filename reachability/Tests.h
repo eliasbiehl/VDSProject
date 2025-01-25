@@ -183,15 +183,32 @@ TEST_F(ReachabilityTest, ComplexOBDDTest)
     std::vector<BDD_ID> inputVars = fsm4->getInputs();
     std::vector<BDD_ID> transitionFunctions;
 
+    //State and Input Variables
     BDD_ID s0 = stateVars.at(0);
     BDD_ID s1 = stateVars.at(1);
     BDD_ID s2 = stateVars.at(2);
     BDD_ID s3 = stateVars.at(3);
     BDD_ID x0 = inputVars.at(0);
+
+    //State encoding
     BDD_ID A = fsm4->and2(fsm4->and2(fsm4->and2(fsm4->neg(s0), fsm4->neg(s1)), fsm4->neg(s2)), fsm4->neg(s3));
     BDD_ID B = fsm4->and2(fsm4->and2(fsm4->and2(s0, fsm4->neg(s1)), fsm4->neg(s2)), fsm4->neg(s3));
     BDD_ID C = fsm4->and2(fsm4->and2(fsm4->and2(fsm4->neg(s0), s1), fsm4->neg(s2)), fsm4->neg(s3));
     BDD_ID D = fsm4->and2(fsm4->and2(fsm4->and2(s0, s1), fsm4->neg(s2)), fsm4->neg(s3));
+    BDD_ID E = fsm4->and2(fsm4->and2(fsm4->and2(fsm4->neg(s0), fsm4->neg(s1)), s2), fsm4->neg(s3));
+    BDD_ID F = fsm4->and2(fsm4->and2(fsm4->and2(s0, fsm4->neg(s1)), s2), fsm4->neg(s3));
+    BDD_ID G = fsm4->and2(fsm4->and2(fsm4->and2(fsm4->neg(s0), s1), s2), fsm4->neg(s3));
+    BDD_ID H = fsm4->and2(fsm4->and2(fsm4->and2(s0, s1), s2), fsm4->neg(s3));
+    BDD_ID I = fsm4->and2(fsm4->and2(fsm4->and2(fsm4->neg(s0), fsm4->neg(s1)), fsm4->neg(s2)), s3);
+    BDD_ID J = fsm4->and2(fsm4->and2(fsm4->and2(s0, fsm4->neg(s1)), fsm4->neg(s2)), s3);
+    BDD_ID K = fsm4->and2(fsm4->and2(fsm4->and2(fsm4->neg(s0), s1), fsm4->neg(s2)), s3);
+    BDD_ID L = fsm4->and2(fsm4->and2(fsm4->and2(s0, s1), fsm4->neg(s2)), s3);
+    BDD_ID M = fsm4->and2(fsm4->and2(fsm4->and2(fsm4->neg(s0), fsm4->neg(s1)), s2), s3);
+    BDD_ID N = fsm4->and2(fsm4->and2(fsm4->and2(s0, fsm4->neg(s1)), s2), s3);
+    BDD_ID O = fsm4->and2(fsm4->and2(fsm4->and2(fsm4->neg(s0), s1), s2), s3);
+    BDD_ID P = fsm4->and2(fsm4->and2(fsm4->and2(s0, s1), s2), s3);
+
+    //Possible State Input combinations
     BDD_ID A_x0= fsm4->and2(A, x0);
     BDD_ID A_NOTx0= fsm4->and2(A, fsm4->neg(x0));
     BDD_ID B_x0= fsm4->and2(B, x0);
@@ -200,23 +217,58 @@ TEST_F(ReachabilityTest, ComplexOBDDTest)
     BDD_ID C_NOTx0= fsm4->and2(C, fsm4->neg(x0));
     BDD_ID D_x0= fsm4->and2(D, x0);
     BDD_ID D_NOTx0= fsm4->and2(D, fsm4->neg(x0));
+    BDD_ID E_x0= fsm4->and2(E, x0);
+    BDD_ID E_NOTx0= fsm4->and2(E, fsm4->neg(x0));
+    BDD_ID F_x0= fsm4->and2(F, x0);
+    BDD_ID F_NOTx0= fsm4->and2(F, fsm4->neg(x0));
+    BDD_ID G_x0= fsm4->and2(G, x0);
+    BDD_ID G_NOTx0= fsm4->and2(G, fsm4->neg(x0));
+    BDD_ID H_x0= fsm4->and2(H, x0);
+    BDD_ID H_NOTx0= fsm4->and2(H, fsm4->neg(x0));
+    BDD_ID I_x0= fsm4->and2(I, x0);
+    BDD_ID I_NOTx0= fsm4->and2(I, fsm4->neg(x0));
+    BDD_ID J_x0= fsm4->and2(J, x0);
+    BDD_ID J_NOTx0= fsm4->and2(J, fsm4->neg(x0));
+    BDD_ID K_x0= fsm4->and2(K, x0);
+    BDD_ID K_NOTx0= fsm4->and2(K, fsm4->neg(x0));
+    BDD_ID L_x0= fsm4->and2(L, x0);
+    BDD_ID L_NOTx0= fsm4->and2(L, fsm4->neg(x0));
+    BDD_ID M_x0= fsm4->and2(M, x0);
+    BDD_ID M_NOTx0= fsm4->and2(M, fsm4->neg(x0));
+    BDD_ID N_x0= fsm4->and2(N, x0);
+    BDD_ID N_NOTx0= fsm4->and2(N, fsm4->neg(x0));
+    BDD_ID O_x0= fsm4->and2(O, x0);
+    BDD_ID O_NOTx0= fsm4->and2(O, fsm4->neg(x0));
+    BDD_ID P_x0= fsm4->and2(P, x0);
+    BDD_ID P_NOTx0= fsm4->and2(P, fsm4->neg(x0));
 
-    transitionFunctions.push_back(fsm4->or2(fsm4->or2(A, B_NOTx0), C_NOTx0));
-    transitionFunctions.push_back(fsm4->or2(fsm4->or2(fsm4->or2(A, B_NOTx0), C_NOTx0), D_x0));
-    transitionFunctions.push_back(fsm4->Manager::False());
-    transitionFunctions.push_back(fsm4->Manager::False());
-
+    //All transition Functions
+    transitionFunctions.push_back(fsm4->or2(fsm4->or2(fsm4->or2(fsm4->or2(A_NOTx0,B_NOTx0),C_NOTx0),E_NOTx0),G_NOTx0));
+    transitionFunctions.push_back(fsm4->or2(fsm4->or2(fsm4->or2(fsm4->or2(fsm4->or2(A_NOTx0,B_NOTx0),C_NOTx0),F_NOTx0),G_NOTx0),D_x0));
+    transitionFunctions.push_back(fsm4->or2(fsm4->or2(fsm4->or2(fsm4->or2(A_x0,E_NOTx0),F_NOTx0),G_NOTx0),I_NOTx0));
+    transitionFunctions.push_back(H_NOTx0);
     fsm4->setTransitionFunctions(transitionFunctions);
+
+    //Initial State
     fsm4->setInitState({false, false, false, false});
+
+    //All State bit combinations and there reachability
     EXPECT_TRUE(fsm4->isReachable({false,false,false,false}));
     EXPECT_FALSE(fsm4->isReachable({true,false,false,false}));
     EXPECT_TRUE(fsm4->isReachable({false,true,false,false}));
     EXPECT_TRUE(fsm4->isReachable({true,true,false,false}));
-    EXPECT_FALSE(fsm4->isReachable({false,false,true,false}));
-    EXPECT_FALSE(fsm4->isReachable({true,false,true,false}));
-    EXPECT_FALSE(fsm4->isReachable({false,true,true,false}));
-    EXPECT_FALSE(fsm4->isReachable({true,true,true,false}));
-    EXPECT_FALSE(fsm4->isReachable({false,false,false,true}));
+    EXPECT_TRUE(fsm4->isReachable({false,false,true,false}));
+    EXPECT_TRUE(fsm4->isReachable({true,false,true,false}));
+    EXPECT_TRUE(fsm4->isReachable({false,true,true,false}));
+    EXPECT_TRUE(fsm4->isReachable({true,true,true,false}));
+    EXPECT_TRUE(fsm4->isReachable({false,false,false,true}));
+    EXPECT_FALSE(fsm4->isReachable({true,false,false,true}));
+    EXPECT_FALSE(fsm4->isReachable({false,true,false,true}));
+    EXPECT_FALSE(fsm4->isReachable({true,true,false,true}));
+    EXPECT_FALSE(fsm4->isReachable({false,false,true,true}));
+    EXPECT_FALSE(fsm4->isReachable({true,false,true,true}));
+    EXPECT_FALSE(fsm4->isReachable({false,true,true,true}));
+    EXPECT_FALSE(fsm4->isReachable({true,true,true,true}));
 }
 
 TEST(Distance_Test, distanceExample) { /* NOLINT */
