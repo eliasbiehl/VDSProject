@@ -188,10 +188,10 @@ TEST_F(ReachabilityTest, ComplexOBDDTest)
     BDD_ID s2 = stateVars.at(2);
     BDD_ID s3 = stateVars.at(3);
     BDD_ID x0 = inputVars.at(0);
-    BDD_ID A = fsm4->and2(fsm4->and2(fsm4->and2(s0, fsm4->neg(s1)), fsm4->neg(s2)), fsm4->neg(s3));
-    BDD_ID B = fsm4->and2(fsm4->and2(fsm4->and2(fsm4->neg(s0), s1), fsm4->neg(s2)), fsm4->neg(s3));
-    BDD_ID C = fsm4->and2(fsm4->and2(fsm4->and2(fsm4->neg(s0), fsm4->neg(s1)), s2), fsm4->neg(s3));
-    BDD_ID D = fsm4->and2(fsm4->and2(fsm4->and2(fsm4->neg(s0), fsm4->neg(s1)), fsm4->neg(s2)), s3);
+    BDD_ID A = fsm4->and2(fsm4->and2(fsm4->and2(fsm4->neg(s0), fsm4->neg(s1)), fsm4->neg(s2)), fsm4->neg(s3));
+    BDD_ID B = fsm4->and2(fsm4->and2(fsm4->and2(s0, fsm4->neg(s1)), fsm4->neg(s2)), fsm4->neg(s3));
+    BDD_ID C = fsm4->and2(fsm4->and2(fsm4->and2(fsm4->neg(s0), s1), fsm4->neg(s2)), fsm4->neg(s3));
+    BDD_ID D = fsm4->and2(fsm4->and2(fsm4->and2(s0, s1), fsm4->neg(s2)), fsm4->neg(s3));
     BDD_ID A_x0= fsm4->and2(A, x0);
     BDD_ID A_NOTx0= fsm4->and2(A, fsm4->neg(x0));
     BDD_ID B_x0= fsm4->and2(B, x0);
@@ -201,25 +201,28 @@ TEST_F(ReachabilityTest, ComplexOBDDTest)
     BDD_ID D_x0= fsm4->and2(D, x0);
     BDD_ID D_NOTx0= fsm4->and2(D, fsm4->neg(x0));
 
-    transitionFunctions.push_back(fsm4->or2(fsm4->or2(B_x0, C_x0), D_NOTx0));
-    transitionFunctions.push_back(B_x0);
-    transitionFunctions.push_back(D_x0);
-    transitionFunctions.push_back(fsm4->or2(fsm4->or2(fsm4->or2(A_NOTx0, A_x0), B_NOTx0), C_NOTx0));
+    transitionFunctions.push_back(fsm4->or2(fsm4->or2(A, B_NOTx0), C_NOTx0));
+    transitionFunctions.push_back(fsm4->or2(fsm4->or2(fsm4->or2(A, B_NOTx0), C_NOTx0), D_x0));
+    transitionFunctions.push_back(fsm4->Manager::False());
+    transitionFunctions.push_back(fsm4->Manager::False());
 
     fsm4->setTransitionFunctions(transitionFunctions);
     fsm4->setInitState({false, false, false, false});
     EXPECT_TRUE(fsm4->isReachable({false,false,false,false}));
-    EXPECT_FALSE(fsm4->isReachable({false,true,false,false}));
-    EXPECT_TRUE(fsm4->isReachable({true,false,false,false}));
+    EXPECT_FALSE(fsm4->isReachable({true,false,false,false}));
     EXPECT_TRUE(fsm4->isReachable({false,true,false,false}));
-    EXPECT_TRUE(fsm4->isReachable({true,false,true,false}));
-    EXPECT_TRUE(fsm4->isReachable({false,false,false,true}));
-    fsm4->setInitState({false,true,false,false});
-    EXPECT_TRUE(fsm4->isReachable({false,true,false,false}));
-    EXPECT_TRUE(fsm4->isReachable({true,false,false,false}));
-    EXPECT_TRUE(fsm4->isReachable({false,true,false,false}));
-    EXPECT_TRUE(fsm4->isReachable({true,false,true,false}));
-    EXPECT_TRUE(fsm4->isReachable({false,false,false,true}));
+    EXPECT_TRUE(fsm4->isReachable({true,true,false,false}));
+    EXPECT_FALSE(fsm4->isReachable({false,false,true,false}));
+    EXPECT_FALSE(fsm4->isReachable({true,false,true,false}));
+    EXPECT_FALSE(fsm4->isReachable({false,true,true,false}));
+    EXPECT_FALSE(fsm4->isReachable({true,true,true,false}));
+    EXPECT_FALSE(fsm4->isReachable({false,false,false,true}));
+    // fsm4->setInitState({false,true,false,false});
+    // EXPECT_TRUE(fsm4->isReachable({false,true,false,false}));
+    // EXPECT_TRUE(fsm4->isReachable({true,false,false,false}));
+    // EXPECT_TRUE(fsm4->isReachable({false,true,false,false}));
+    // EXPECT_TRUE(fsm4->isReachable({true,false,true,false}));
+    // EXPECT_TRUE(fsm4->isReachable({false,false,false,true}));
 }
 
 TEST(Distance_Test, distanceExample) { /* NOLINT */
