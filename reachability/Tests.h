@@ -202,12 +202,13 @@ TEST_F(ReachabilityTest, ComplexOBDDTest)
     BDD_ID D_NOTx0= fsm4->and2(D, fsm4->neg(x0));
 
     transitionFunctions.push_back(fsm4->or2(fsm4->or2(B_x0, C_x0), D_NOTx0));
-    transitionFunctions.push_back(fsm4->Manager::False());
+    transitionFunctions.push_back(B_x0);
     transitionFunctions.push_back(D_x0);
     transitionFunctions.push_back(fsm4->or2(fsm4->or2(fsm4->or2(A_NOTx0, A_x0), B_NOTx0), C_NOTx0));
 
     fsm4->setTransitionFunctions(transitionFunctions);
     fsm4->setInitState({false, false, false, false});
+    EXPECT_TRUE(fsm4->isReachable({false,false,false,false}));
     EXPECT_FALSE(fsm4->isReachable({false,true,false,false}));
     EXPECT_TRUE(fsm4->isReachable({true,false,false,false}));
     EXPECT_TRUE(fsm4->isReachable({false,true,false,false}));
