@@ -29,22 +29,22 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/TUK-EIS/VDSProject">
+  <a href="https://github.com/eliasbiehl/VDSProject_Group4">
     <img src="doc/figures/RPTU-Logo-RGB.png" alt="Logo" width="400" height="200">
   </a>
   <h3 align="center">
   VDS Class Project
   <br />
-  Group #X
+  Group 04
   <br />
-  Winter Semester 2022/2023
+  Winter Semester 2024/2025
   </h3>
 
   <p align="center">
     GitHub repository for the Verification of Digital Systems Class Project
     <br />
     <br />
-    <a href="https://github.com/TUK-EIS/VDSProject/issues">Report Bug</a>
+    <a href="https://github.com/eliasbiehl/VDSProject_Group4/issues">Report Bug</a>
   </p>
 </div>
 
@@ -156,7 +156,7 @@ This is an example of how to list things you need to use the software and how to
 ### Installation
 1. Clone the repo
    ```sh
-   git clone https://github.com/your_username_/VDSProject
+   git clone https://github.com/eliasbiehl/VDSProject_Group4.git
    ```
 **Installation with CLion**
 
@@ -222,7 +222,11 @@ _Below is an example of how you can instruct your audience on installing and set
 ## Contact
 
 <!-- Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com -->
-Lucas Deutschmann & Philipp Schmitz - eit-vds-cp@rptu.de
+Furkan Aktas - [faktas@rptu.de](mailto:faktas@rptu.de)
+
+Elias Biehl - [biehl@rptu.de](mailto:biehl@rptu.de)
+
+Sebastian Czernitzki - [czernitz@rptu.de](mailto:czernitz@rptu.de)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -258,14 +262,14 @@ You might find helpful links below.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/TUK-EIS/VDSProject.svg?style=for-the-badge
-[contributors-url]: https://github.com/TUK-EIS/VDSProject/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/TUK-EIS/VDSProject.svg?style=for-the-badge
-[forks-url]: https://github.com/TUK-EIS/VDSProject/network/members
-[stars-shield]: https://img.shields.io/github/stars/TUK-EIS/VDSProject.svg?style=for-the-badge
-[stars-url]: https://github.com/TUK-EIS/VDSProject/stargazers
-[issues-shield]: https://img.shields.io/github/issues/TUK-EIS/VDSProject.svg?style=for-the-badge
-[issues-url]: https://github.com/TUK-EIS/VDSProject/issues
+[contributors-shield]: https://img.shields.io/github/contributors/eliasbiehl/VDSProject_Group4.svg?style=for-the-badge
+[contributors-url]: https://github.com/eliasbiehl/VDSProject_Group4/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/eliasbiehl/VDSProject_Group4.svg?style=for-the-badge
+[forks-url]: https://github.com/eliasbiehl/VDSProject_Group4/network/members
+[stars-shield]: https://img.shields.io/github/stars/eliasbiehl/VDSProject_Group4.svg?style=for-the-badge
+[stars-url]: https://github.com/eliasbiehl/VDSProject_Group4/stargazers
+[issues-shield]: https://img.shields.io/github/issues/eliasbiehl/VDSProject_Group4.svg?style=for-the-badge
+[issues-url]: https://github.com/eliasbiehl/VDSProject_Group4/issues
 <!--
 [license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
