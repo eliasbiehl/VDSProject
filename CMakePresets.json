@@ -38,27 +38,6 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
-        },
-        {
-            "name": "relwithdebinfo",
-            "description": "Release build with debug info",
-            "inherits": [
-                "base"
-            ],
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-            }
-        },
-        {
-            "name": "ci",
-            "description": "Continuous integration build",
-            "inherits": [
-                "base"
-            ],
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
-            }
         }
     ]
 }

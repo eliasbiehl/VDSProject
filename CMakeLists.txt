@@ -4,6 +4,7 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC -std=c++17 ${LLVM_CXX_FLAGS} ")
 include(CTest)
 include(FetchContent)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -mtune=native")
 
 # Download and unpack googletest at configure time
 configure_file(CMakeLists.txt.in ${CMAKE_SOURCE_DIR}/gtest/googletest-download/CMakeLists.txt)
@@ -44,11 +45,17 @@ link_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/src/test/)
 link_directories(${CMAKE_SOURCE_DIR}/src/test/)
 
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/bench/)
 include_directories(${CMAKE_SOURCE_DIR}/src/bench/)
 link_directories(${CMAKE_SOURCE_DIR}/src/bench/)
 
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/verify/)
 include_directories(${CMAKE_SOURCE_DIR}/src/verify/)
 link_directories(${CMAKE_SOURCE_DIR}/src/verify/)
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/reachability)
+include_directories(${CMAKE_SOURCE_DIR}/src/reachability)
+link_directories(${CMAKE_SOURCE_DIR}/src/reachability)
 
 add_subdirectory(src)
 add_executable(VDSProject src/main.cpp)
