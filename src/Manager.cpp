@@ -36,7 +36,7 @@ namespace ClassProject {
 
     // Determine if a node is a constant
     bool Manager::isConstant(const BDD_ID f) {
-        return f <= 1;
+        return (f == True() || f == False());
     }
 
     // Determine if a node is a variable

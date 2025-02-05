@@ -153,8 +153,10 @@ bool Reachability::isReachable(const std::vector<bool> &stateVector) {
         } else {
             tmp = coFactorFalse(tmp, stateBits.at(i));
         }
+
         // Early exit if tmp is a terminal node.
-        if (tmp <= Manager::True()) {
+        if (Manager::isConstant(tmp)) {
+            // Transformation of BBD_ID to boolean value. 
             return (tmp == Manager::True());
         }
     }
@@ -209,6 +211,7 @@ int Reachability::stateDistance(const std::vector<bool> &stateVector) {
     do {
         Cr = Crit;
         img = computeImage(Cr, tau);
+        // Unification of the reachable states
         Crit = or2(img, Cr);
         if (isReachableInSet(stateVector, Cr)) {
             return cnt;
