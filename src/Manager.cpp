@@ -285,7 +285,16 @@ namespace ClassProject {
 
     // Get the name of the top variable of a node
     std::string Manager::getTopVarName(const BDD_ID &root) {
-        return "dummy";
+        if (isConstant(root)) {
+            if(root == True()) {
+                return "True";
+            } else {
+                return "False";
+            }
+        } else if (isVariable(root)) {
+            return "x" + std::to_string(root);
+        }
+        return "Is not a variable and no constant -> Is not supported";
     }
 
     void Manager::findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root) {

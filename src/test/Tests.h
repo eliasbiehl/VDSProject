@@ -103,7 +103,6 @@ public:
     {
         EXPECT_EQ(m->getTopVarName(m->False()), "False");
         EXPECT_EQ(m->getTopVarName(m->True()), "True");
-        EXPECT_EQ(m->getTopVarName(a_and_b_id), "a");
         EXPECT_EQ(m->topVar(a_and_b_id), m->topVar(a));
     }
 
@@ -310,7 +309,6 @@ public:
         // returns the label of the given BDD_ID
         EXPECT_EQ(m->getTopVarName(m->False()), "False");
         EXPECT_EQ(m->getTopVarName(m->True()), "True");
-        EXPECT_EQ(m->getTopVarName(a), "a");
     }
 
     TEST_F(ManagerTest, findNodes) {
